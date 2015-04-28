@@ -1,7 +1,9 @@
 # INSTALLATION
 
 ## Summary 
-Lookup Table handling for LaSalle Content Management System 
+Lookup Table handling for LaSalle Content Management System. 
+
+First usage is actually with LaSalle Customer Management software. 
 
 
 ## composer.json:
