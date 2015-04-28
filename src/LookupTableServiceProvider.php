@@ -1,4 +1,4 @@
-<?php namespace Lasallecms\Contact;
+<?php namespace Lasallecms\Lookuptables;
 
 /**
  *
@@ -37,7 +37,7 @@ use Illuminate\Support\ServiceProvider;
  *
  * @author Bob Bloom <info@southlasalle.com>
  */
-class LookuptablesServiceProvider extends ServiceProvider {
+class LookupTablesServiceProvider extends ServiceProvider {
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -82,7 +82,7 @@ class LookuptablesServiceProvider extends ServiceProvider {
      */
     public function setupViews()
     {
-        $this->loadViewsFrom(__DIR__.'/../views', 'contact');
+        $this->loadViewsFrom(__DIR__.'/../views', 'lookuptables');
 
         $this->publishes([
             __DIR__.'/../views' => base_path('resources/views/vendor/lookuptables'),
