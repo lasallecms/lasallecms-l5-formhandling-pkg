@@ -1,8 +1,9 @@
-<?php namespace Lasallecms\Lookuptables;
+<?php
+namespace Lasallecms\Formhandling;
 
 /**
  *
- * Lookup Table handling package for the LaSalle Content Management System, based on the Laravel 5 Framework
+ * Form handling package for the LaSalle Content Management System, based on the Laravel 5 Framework
  * Copyright (C) 2015  The South LaSalle Trading Corporation
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * @package    Lookup Table handling package for the LaSalle Content Management System
+ * @package    Form Table handling package for the LaSalle Content Management System
  * @link       http://LaSalleCMS.com
  * @copyright  (c) 2015, The South LaSalle Trading Corporation
  * @license    http://www.gnu.org/licenses/gpl-3.0.html
@@ -28,7 +29,8 @@
  *
  */
 
-class Version {
+class Version
+{
 
 	/**
 	 * This package's version number.
@@ -43,7 +45,7 @@ class Version {
 	 *
 	 * @var string
 	 */
-	const PACKAGE = 'Lookup Table handling package for the LaSalle Content Management System';
+	const PACKAGE = 'Form handling package for the LaSalle Content Management System';
 
 
 	/**

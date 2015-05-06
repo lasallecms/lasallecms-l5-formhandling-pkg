@@ -1,8 +1,9 @@
-<?php namespace Lasallecms\Lookuptables;
+<?php
+namespace Lasallecms\Formhandling;
 
 /**
  *
- * Lookup Table handling package for the LaSalle Content Management System, based on the Laravel 5 Framework
+ * Form handling package for the LaSalle Content Management System, based on the Laravel 5 Framework
  * Copyright (C) 2015  The South LaSalle Trading Corporation
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * @package    Lookup Table handling package for the LaSalle Content Management System
+ * @package    Form Table handling package for the LaSalle Content Management System
  * @link       http://LaSalleCMS.com
  * @copyright  (c) 2015, The South LaSalle Trading Corporation
  * @license    http://www.gnu.org/licenses/gpl-3.0.html
@@ -31,13 +32,13 @@
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
-
 /**
  * This is the Contact service provider class.
  *
  * @author Bob Bloom <info@southlasalle.com>
  */
-class LookupTablesServiceProvider extends ServiceProvider {
+class FormHandlingServiceProvider extends ServiceProvider
+{
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -67,10 +68,10 @@ class LookupTablesServiceProvider extends ServiceProvider {
      */
     protected function setupConfiguration()
     {
-        $configuration = realpath(__DIR__.'/../config/lookuptables.php');
+        $configuration = realpath(__DIR__.'/../config/formhandling.php');
 
         $this->publishes([
-            $configuration => config_path('lookuptables.php'),
+            $configuration => config_path('formhandling.php'),
         ]);
     }
 
@@ -82,10 +83,10 @@ class LookupTablesServiceProvider extends ServiceProvider {
      */
     public function setupViews()
     {
-        $this->loadViewsFrom(__DIR__.'/../views', 'lookuptables');
+        $this->loadViewsFrom(__DIR__.'/../views', 'formhandling');
 
         $this->publishes([
-            __DIR__.'/../views' => base_path('resources/views/vendor/lookuptables'),
+            __DIR__.'/../views' => base_path('resources/views/vendor/formhandling'),
         ]);
 
     }
@@ -98,7 +99,7 @@ class LookupTablesServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        //$this->registerLookuptables();
+        //$this->registerFormhandling();
     }
 
 
@@ -107,10 +108,10 @@ class LookupTablesServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    private function registerLookuptables()
+    private function registerFormhanlding()
     {
-        $this->app->bind('lookuptables', function($app) {
-            return new Lookuptables($app);
+        $this->app->bind('formhanlding', function($app) {
+            return new Formhandling($app);
         });
 
     }
@@ -125,6 +126,4 @@ class LookupTablesServiceProvider extends ServiceProvider {
     {
         return array('lookuptables');
     }
-
-
 }

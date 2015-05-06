@@ -1,8 +1,8 @@
 {
-    "name": "lasallecms/lookuptables",
-    "description": "Lookup Table handling package for LaSalleCMS.",
+    "name": "lasallecms/formhandling",
+    "description": "Form handling package for LaSalleCMS.",
     "homepage": "http://lasallecms.com",
-    "keywords": ["laravel", "laravel5", "lookup tables", "LaSalleCMS", "South LaSalle", "Bob Bloom"],
+    "keywords": ["laravel", "laravel5", "form handling", "lookup tables", "LaSalleCMS", "South LaSalle", "Bob Bloom"],
     "license":"GPL-3.0",
     "type": "library",
     "authors": [
@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Lasallecms\\Lookuptables\\": "src/"
+            "Lasallecms\\Formhandling\\": "src/"
         }
     },
     "minimum-stability": "dev"

@@ -1,17 +1,11 @@
 # INSTALLATION
 
-## Summary 
-Lookup Table handling for LaSalle Content Management System. 
-
-First usage is actually with LaSalle Customer Management software. 
-
-
 ## composer.json:
 
 ```
 {
     "require": {
-        "lasallecms/lookuptables": "0.9.*",
+        "lasallecms/formhandling": "0.9.*",
     }
 }
 ```
@@ -21,7 +15,7 @@ First usage is actually with LaSalle Customer Management software.
 
 In config/app.php:
 ```
-'Lasallecms\Lookuptables\LookuptablesServiceProvider',
+'Lasallecms\Formhandling\FormHandlingServiceProvider',
 ```
 
 
