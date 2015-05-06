@@ -88,7 +88,7 @@ abstract class AdminLookupTableBaseController extends BaseController
 
         $records = $this->repository->getAll();
 
-        return view('lookuptables::' . config('lasallecmsadmin.admin_template_name') . '/index', [
+        return view('formhandling::lookuptables/' . config('lasallecmsadmin.admin_template_name') . '/index', [
             'package_title'        => $this->package_title,
             'table_type_plural'    => $this->table_type_plural,
             'table_type_singular'  => $this->table_type_singular,
@@ -108,7 +108,7 @@ abstract class AdminLookupTableBaseController extends BaseController
      */
     public function create()
     {
-        return view('lookuptables::' . config('lasallecmsadmin.admin_template_name') . '/create', [
+        return view('formhandling::lookuptables/' . config('lasallecmsadmin.admin_template_name') . '/create', [
             'package_title'        => $this->package_title,
             'table_type_plural'    => $this->table_type_plural,
             'table_type_singular'  => $this->table_type_singular,
@@ -213,7 +213,7 @@ abstract class AdminLookupTableBaseController extends BaseController
         // Lock the record
         $this->repository->populateLockFields($id);
 
-        return view('lookuptables::' . config('lasallecmsadmin.admin_template_name') . '/create', [
+        return view('formhandling::lookuptables/' . config('lasallecmsadmin.admin_template_name') . '/create', [
             'package_title'       => $this->package_title,
             'table_type_plural'   => $this->table_type_plural,
             'table_type_singular' => $this->table_type_singular,
