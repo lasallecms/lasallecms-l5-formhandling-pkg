@@ -29,9 +29,12 @@ namespace Lasallecms\Formhandling\Lookuptables;
  *
  */
 
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Bus\DispatchesCommands;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+/*
+ * Yes, I am stuffing a bit too much into my methods. My reasoning:
+ *  * lookup table handling is fairly straight forward;
+ *  * no command bus, no events;
+ *  * step-by-step controller = easy to follow what I am doing
+ */
 
 # LaSalle Helpers
 use Lasallecms\Helpers\HTML\HTMLHelper;
@@ -44,6 +47,10 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
+// Laravel classes
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Bus\DispatchesCommands;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 // Note that the template is the same name as the one specified in the LaSalleCMS Admin package's config
 
@@ -83,6 +90,21 @@ abstract class AdminLookupTableBaseController extends BaseController
      */
     public function index()
     {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('index'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to view the list of ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
         // If this user has locked records for this table, then unlock 'em
         $this->repository->unlockMyRecords($this->table_name);
 
@@ -108,6 +130,21 @@ abstract class AdminLookupTableBaseController extends BaseController
      */
     public function create()
     {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('create'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to create ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
         return view('formhandling::lookuptables/' . config('lasallecmsadmin.admin_template_name') . '/create', [
             'package_title'        => $this->package_title,
             'table_type_plural'    => $this->table_type_plural,
@@ -128,12 +165,27 @@ abstract class AdminLookupTableBaseController extends BaseController
      */
     public function store()
     {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('store'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to store ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
         // sanitize
-        $rules     = $this->repository->getSanitationRulesForCreate();
+        $rules     = $this->repository->getLookupTablesSanitationRulesForCreate();
         $data      = $this->repository-> getSanitize(Input::all(), $rules);
 
         // Validate
-        $rules     = $this->repository->getValidationRulesForCreate();
+        $rules     = $this->repository->getLookupTablesValidationRulesForCreate();
         $validator = Validator::make($data,$rules);
         if ($validator->fails())
         {
@@ -148,7 +200,7 @@ abstract class AdminLookupTableBaseController extends BaseController
         if (!array_key_exists('enabled', $data)) $data['enabled'] = 0;
 
         // INSERT
-        $lookup = new \Lasallecrm\Lasallecrmapi\Models\Lookup_address_type();
+        $lookup = $this->repository->newModelInstance();
         $lookup->title       = $data['title'];
         $lookup->description = $data['description'];
         $lookup->enabled     = $data['enabled'];
@@ -201,6 +253,21 @@ abstract class AdminLookupTableBaseController extends BaseController
      */
     public function edit($id)
     {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('edit'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to edit ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
         // Is this record locked?
         if ($this->repository->isLocked($id))
         {
@@ -234,11 +301,29 @@ abstract class AdminLookupTableBaseController extends BaseController
     public function update()
     {
         // Sanitize
-        $rules     = $this->repository->getSanitationRulesForUpdate();
-        $data      = $this->repository-> getSanitize(Input::all(), $rules);
+        $rules     = $this->repository->getLookupTablesSanitationRulesForUpdate();
+        $data      = $this->repository->getSanitize(Input::all(), $rules);
+
+        // Unlook the record
+        $this->repository->unpopulateLockFields($data['id']);
+
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('update'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to update ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
 
         // Validate
-        $rules     = $this->repository->getValidationRulesForUpdate();
+        $rules     = $this->repository->getLookupTablesValidationRulesForUpdate();
         $validator = Validator::make($data,$rules);
         if ($validator->fails())
         {
@@ -274,9 +359,6 @@ abstract class AdminLookupTableBaseController extends BaseController
             return Redirect::back()->withInput($data);
         }
 
-        // Unlook the record
-        $this->repository->unpopulateLockFields($data['id']);
-
         Session::flash('status_code', 200 );
 
         $title = strtoupper($data['title']);
@@ -293,26 +375,55 @@ abstract class AdminLookupTableBaseController extends BaseController
      * @param  int      $id
      * @return Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('destroy'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to delete ".$this->table_type_plural;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->package_title,
+                'table_type_plural'    => $this->table_type_plural,
+                'table_type_singular'  => $this->table_type_singular,
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
 
         // Is this record locked?
         if ($this->repository->isLocked($id))
         {
-            $message = 'This tag is not available for editing, as someone else is currently editing this tag';
+            $message = 'This tag is not available for deletion, as someone else is currently editing this '.$this->table_type_singular;
             Session::flash('message', $message);
             Session::flash('status_code', 400 );
             return Redirect::route('admin.'.$this->resource_route_name.'.index');
+        }
+
+
+        // Do other tables use this lookup table ID?
+        // are there records that use this lookup table record?
+        $foreignKeyChecks = $this->repository->foreignKeyChecks($id);
+        foreach ($foreignKeyChecks as $foreignKeyCheck)
+        {
+            if ($foreignKeyCheck['count'] > 0)
+            {
+                $message = "Foreign key constraint! The table ".strtoupper($foreignKeyCheck['related_table'])." is using this record ".$foreignKeyCheck['count']." times. Can only delete this record when no other tables are using it.";
+                Session::flash('message', $message);
+                Session::flash('status_code', 400 );
+                return Redirect::route('admin.'.$this->resource_route_name.'.index');
+            }
         }
 
         $title = $this->repository->getFind($id)->title;;
 
         if ( !$this->repository->getDestroy($id) )
         {
-            Session::flash('status_code', 500 );
-
             $message = "Deletion failed. Probably due to a system blip. Please try again.";
+            Session::flash('status_code', 500 );
             Session::flash('message', $message);
-            return Redirect::back()->withInput($lookup);
+            return Redirect::route('admin.'.$this->resource_route_name.'.index');
         }
 
         Session::flash('status_code', 200 );

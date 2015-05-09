@@ -20,7 +20,6 @@
                 {!! $HTMLHelper::adminCreateButton($resource_route_name, $table_type_singular, 'right') !!}
 
 
-
                 {{-- bootstrap table tutorial http://twitterbootstrap.org/twitter-bootstrap-table-example-tutorial --}}
 
                 {{-- http://datatables.net/manual/options --}}
@@ -32,8 +31,8 @@
                         <th>Title</th>
                         <th>Description</th>
                         <th style="text-align: center;">Enabled</th>
-                        <th></th>
-                        <th></th>
+                        <th style="text-align: center;">Edit</th>
+                        <th style="text-align: center;">Delete</th>
                     </tr>
 
                     </thead>
@@ -79,12 +78,12 @@
 
                 <br /><br />
                 <h2>
-                    There are no {{{ strtolower($table_type_plural) }}}. Go ahead, create your first {{{ strtolower($table_title_singular) }}}!
+                    There are no {{{ strtolower($table_type_plural) }}}. Go ahead, create your first {{{ strtolower($table_type_singular) }}}!
                 </h2>
 
                 <br />
 
-                {!! $HTMLHelper::adminCreateButton($resource_route_name, $table_title_singular, 'left') !!}
+                {!! $HTMLHelper::adminCreateButton($resource_route_name, $table_type_singular, 'left') !!}
             @endif
 
         </div> <!-- container -->
