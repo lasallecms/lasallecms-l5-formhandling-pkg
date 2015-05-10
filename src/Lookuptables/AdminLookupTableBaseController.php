@@ -392,15 +392,23 @@ abstract class AdminLookupTableBaseController extends BaseController
             ]);
         }
 
+        // Is this record not supposed to be deleted?
+        if ($this->repository->doNotDelete($id))
+        {
+            Session::flash('status_code', 400 );
+            $message = 'This '.$this->table_type_singular.' is a core lookup record, so you cannot delete it';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->resource_route_name.'.index');
+        }
+
         // Is this record locked?
         if ($this->repository->isLocked($id))
         {
-            $message = 'This tag is not available for deletion, as someone else is currently editing this '.$this->table_type_singular;
+            $message = 'This '.$this->table_type_singular.' is not available for deletion, as someone else is currently editing this '.$this->table_type_singular;
             Session::flash('message', $message);
             Session::flash('status_code', 400 );
             return Redirect::route('admin.'.$this->resource_route_name.'.index');
         }
-
 
         // Do other tables use this lookup table ID?
         // are there records that use this lookup table record?
@@ -415,7 +423,6 @@ abstract class AdminLookupTableBaseController extends BaseController
                 return Redirect::route('admin.'.$this->resource_route_name.'.index');
             }
         }
-
         $title = $this->repository->getFind($id)->title;;
 
         if ( !$this->repository->getDestroy($id) )
@@ -432,9 +439,5 @@ abstract class AdminLookupTableBaseController extends BaseController
         $message = 'You successfully deleted the '.$this->table_type_singular.' "'.$title.'"!';
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->resource_route_name.'.index');
-
     }
-
-
-
 }

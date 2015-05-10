@@ -13,7 +13,7 @@
                 <br /><br />
                 <h1>
                         <span class="label label-info">
-                            {{{ (isset($record)) ? 'Edit the "'.$record->title.'"' : 'Create an' }}} {{{ $table_type_singular }}}
+                            {{{ (isset($record)) ? 'Edit the "'.$record->title.'"' : 'Create ' }}} {{{ $table_type_singular }}}
                         </span>
                 </h1>
                 <br /><br />

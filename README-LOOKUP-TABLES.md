@@ -178,6 +178,15 @@ class Lookup_address_type extends BaseModel
         ['update'  => ['Super Administrator']],
         ['destroy' => ['Super Administrator']],
     ];
+    
+    /*
+     * Lookup table records that must not be deleted. 
+     * 
+     * Specify the "title" field, not the "id" field, as the ID can change for a given TITLE. 
+     * 
+     * Optional!
+     */
+    protected $do_not_delete = [];
 
 
 
