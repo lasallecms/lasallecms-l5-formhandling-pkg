@@ -8,6 +8,22 @@ Lookup tables have the same structure. So, why set up the same files over and ov
 
 This package does most of the work so you can do minimal lookup table setup in the admin.
 
+## Routes
+
+First thing you should do is add the resource controller to your routes file. No special instructions, just specify the resource controller like usual. Here's an excerpt from my routes.php:
+
+~~~
+Route::group(array('prefix' => 'admin'), function()
+{
+    // Lookup Tables
+    Route::resource('luaddresses', 'AdminLookupAddressTypesController');
+    Route::resource('luemails', 'AdminLookupEmailTypesController');
+    Route::resource('lusocials', 'AdminLookupSocialTypesController');
+    Route::resource('lutelephones', 'AdminLookupTelephoneTypesController');
+    Route::resource('luwebsites', 'AdminLookupWebsiteTypesController');
+});
+~~~
+
 ## Migrations
 
 You have to set up the migrations and models. 
@@ -15,8 +31,6 @@ You have to set up the migrations and models.
 ~~~
 public function up()
 {
-    // START: Lookup tables
-
     if (!Schema::hasTable('lookup_address_types'))
     {
         Schema::create('lookup_address_types', function (Blueprint $table)
@@ -80,18 +94,63 @@ CREATE TABLE IF NOT EXISTS `lookup_address_types` (
 
 ~~~
 
-## Models
+## Seeds
 
-I've always wanted to pursue a modelling career, and Laravel gives me my lifetime opportunity to actualize my dream. Oh, thank you Laravel!
-
-Here's the model:
+Here is an excerpt from a seed file.
 
 ~~~
-<?php namespace Lasallecrm\Lasallecrmapi\Models;
+class LasallecrmapiTableSeeder extends Seeder
+{
 
-use Lasallecrm\Lasallecrmapi\Models\BaseModel;
+    /**
+     * Run the LaSalleCRM database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Model::unguard();
 
-class Lookup_address_type extends BaseModel {
+        // lookup_address_type table
+
+        Lookup_address_type::create([
+            'title'       => 'Work',
+            'description' => 'Work',
+            'enabled'     => 1,
+            'created_at' => new DateTime,
+            'created_by' => 1,
+            'updated_at' => new DateTime,
+            'updated_by' => 1,
+        ]);
+    }    
+}        
+~~~
+
+## Models
+
+The model class is highly structured. Most of it does not change. 
+
+Modify as required where you see "lookup_address_type" and "addresses".
+
+~~~
+<?php
+namespace Lasallecrm\Lasallecrmapi\Models;
+
+/*
+ * LOOKUP_ADDRESS_TYPES IS A LOOKUP TABLE!
+ */
+
+// LaSalle Software
+use Lasallecms\Lasallecmsapi\Models\BaseModel;
+
+// Laravel facades
+use Illuminate\Support\Facades\DB;
+
+class Lookup_address_type extends BaseModel
+{
+    ///////////////////////////////////////////////////////////////////
+    //////////////          PROPERTIES              ///////////////////
+    ///////////////////////////////////////////////////////////////////
 
     /**
      * The database table used by the model.
@@ -99,7 +158,6 @@ class Lookup_address_type extends BaseModel {
      * @var string
      */
     public $table = 'lookup_address_types';
-
 
     /**
      * Which fields may be mass assigned
@@ -109,9 +167,28 @@ class Lookup_address_type extends BaseModel {
         'title', 'description', 'enabled'
     ];
 
+    /*
+     * User groups that are allowed to execute each controller action
+     */
+    protected $allowed_user_groups = [
+        ['index'   => ['Super Administrator']],
+        ['create'  => ['Super Administrator']],
+        ['store'   => ['Super Administrator']],
+        ['edit'    => ['Super Administrator']],
+        ['update'  => ['Super Administrator']],
+        ['destroy' => ['Super Administrator']],
+    ];
+
+
+
+    ///////////////////////////////////////////////////////////////////
+    //////////////        RELATIONSHIPS             ///////////////////
+    ///////////////////////////////////////////////////////////////////
 
     /*
      * One to one relationship with address table
+     *
+     * Method name must be the model name, *not* the table name
      *
      * @return Eloquent
      */
@@ -119,29 +196,65 @@ class Lookup_address_type extends BaseModel {
     {
         return $this->belongsTo('Lasallecrm\Lasallecrmapi\Models\Address');
     }
+
+
+
+    ///////////////////////////////////////////////////////////////////
+    ////////////        FOREIGN KEY CONSTRAINTS       /////////////////
+    ///////////////////////////////////////////////////////////////////
+
+    /*
+     * Return an array of all the tables using a specified lookup table id.
+     * The array is in the form ['table related to the lookup table' => 'count']
+     *
+     * @param   int   $id   Table ID
+     * @return  array
+     */
+    public function foreignKeyCheck($id)
+    {
+        // 'related_table' is the table name
+        return  [
+            [ 'related_table' => 'addresses', 'count' => $this->addressesCount($id) ],
+        ];
+    }
+
+    /*
+     * Count of related table using lookup table.
+     *
+     * Method name is the table name (no techie reason, just a convention to adopt)
+     *
+     * @return int
+     */
+    public function addressesCount($id)
+    {
+        // I know eloquent does this, but having trouble so hand crafting using DB
+        $record =  DB::table('addresses')->where('address_type_id', '=', $id)->get();
+        return count($record);
+    }
 }
 ~~~
 
-Modify your namespace and class names, eh!
-
-The assumption is that there is one "real" table that has a one-to-one relationship with this lookup table. In this code, it is the "address" table. 
 
 ## Controller
 
-This package does the hard lifting. The controller you specify in your app:
+The base controller does the heavy lifting. The lookup table's controller is very light. Just customizse the seven user defined properties.
 
 ~~~
-<?php namespace Lasallecrm\Lasallecrmadmin\Http\Controllers;
+<?php
+namespace Lasallecrm\Lasallecrmadmin\Http\Controllers;
 
-use Lasallecms\Lookuptables\AdminLookupTableBaseController;
-use Lasallecms\Lookuptables\LookupRepository;
+// LaSalle Software
+use Lasallecms\Formhandling\Lookuptables\AdminLookupTableBaseController;
+use Lasallecms\Lasallecmsapi\Repositories\BaseRepository;
 
-
+/*
+ * Resource controller for administration of lookup_address_types
+ */
 class AdminLookupAddressTypesController extends AdminLookupTableBaseController
 {
-
     ///////////////////////////////////////////////////////////////////
     ////////////////     USER DEFINED PROPERTIES      /////////////////
+    ////////////////           MODIFY THESE!          /////////////////
     ///////////////////////////////////////////////////////////////////
 
     /*
@@ -165,12 +278,6 @@ class AdminLookupAddressTypesController extends AdminLookupTableBaseController
     protected $table_name           = "lookup_address_types";
 
     /*
-
-
-
-
-
-
      * This lookup table's model class namespace
      */
     protected $model_namespace      = "Lasallecrm\Lasallecrmapi\Models";
@@ -191,9 +298,13 @@ class AdminLookupAddressTypesController extends AdminLookupTableBaseController
     ////////////////     DO NOT MODIFY BELOW!         /////////////////
     ///////////////////////////////////////////////////////////////////
 
-    public function __construct(LookupRepository $repository)
+    /*
+     * @param  Lasallecms\Lasallecmsapi\Repositories\BaseRepository
+     * @return void
+     */
+    public function __construct(BaseRepository $repository)
     {
-        // execute AdminController's construct method first in order to run the middleware
+        // execute AdminLookupTableBaseController's construct method first in order to run the middleware
         parent::__construct() ;
 
         // Inject repository
@@ -205,7 +316,7 @@ class AdminLookupAddressTypesController extends AdminLookupTableBaseController
 }
 ~~~
 
-Modify the namespace and class name. Then, modify the properties. 
+
 
 
 
