@@ -29,40 +29,55 @@ namespace Lasallecms\Formhandling\AdminFormhandling;
  *
  */
 
+// LaSalle Software
+use Lasallecms\Helpers\Dates\DatesHelper;
+use Lasallecms\Helpers\HTML\HTMLHelper;
+
+// Command bus commands
+use Lasallecms\Formhandling\AdminFormhandling\CreateCommand;
+use Lasallecms\Formhandling\AdminFormhandling\UpdatePostCommand;
+use Lasallecms\Formhandling\AdminFormhandling\DeletePostCommand;
+
+// Laravel classes
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Bus\DispatchesCommands;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-
-# LaSalle Helpers
-use Lasallecms\Helpers\HTML\HTMLHelper;
-use Lasallecms\Helpers\Dates\DatesHelper;
+use Illuminate\Http\Request;
 
 // Laravel Facades
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
-// Note that the template is the same name as the one specified in the LaSalleCMS Admin package's config
+// Third party classes
+use Carbon\Carbon;
+use Collective\Html\FormFacade as Form;
+
+// FYI: the template is the same name as the one specified in the LaSalleCMS Admin package's config
 
 abstract class AdminFormBaseController extends BaseController
 {
     use DispatchesCommands, ValidatesRequests;
 
     /*
-     * @var namespace/class of the relevant model
-     */
-    protected $modelNamespaceClass;
-
-    /*
      * Repository
      *
-     * @var Lasallecms\Helpers\Repositories\LookupRespository
+     * @var Lasallecms\Lasallecmsapi\Repositories\BaseRepository
      */
     protected $repository;
 
+    /*
+     * @var  namespace and class of relevant model
+     */
+    protected $model;
 
+
+    /*
+     * Middleware!
+     */
     public function __construct()
     {
         // User must be logged to access everything in this package
@@ -72,27 +87,366 @@ abstract class AdminFormBaseController extends BaseController
         $this->middleware(\Lasallecms\Helpers\Middleware\CustomAdminAuthChecks::class);
     }
 
+
     /**
-     * Display a listing of the lookup table's records
-     * GET /{lookup table}/index
+     * Display a listing
+     * GET /{table}/index
      *
      * @return Response
      */
     public function index()
     {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('index'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to view the list of ".$this->table_name;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->model->package_title,
+                'table_type_plural'    => $this->model->table,
+                'table_type_singular'  => strtolower($this->model->model_class),
+                'resource_route_name'  => $this->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
+
         // If this user has locked records for this table, then unlock 'em
-        $this->repository->unlockMyRecords($this->table_name);
+        $this->repository->unlockMyRecords($this->model->table);
 
-        $records = $this->repository->getAll();
 
-        return view('formhandling::lookuptables/' . config('lasallecmsadmin.admin_template_name') . '/index', [
-            'package_title'        => $this->package_title,
-            'table_type_plural'    => $this->table_type_plural,
-            'table_type_singular'  => $this->table_type_singular,
-            'resource_route_name'  => $this->resource_route_name,
-            'DatesHelper'          => DatesHelper::class,
-            'HTMLHelper'           => HTMLHelper::class,
-            'records'              => $records,
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/index',
+        [
+            'records'                      => $this->repository->getAll(),
+            'repository'                   => $this->repository,
+            'package_title'                => $this->model->package_title,
+            'table_name'                   => $this->model->table,
+            'table_name_capitalized'       => ucwords($this->model->table),
+            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
+            'model_class'                  => $this->model->model_class,
+            'resource_route_name'          => $this->model->resource_route_name,
+            'field_list'                   => $this->model->field_list,
+            'suppress_delete_button_when_one_record' => $this->model->suppress_delete_button_when_one_record,
+            'DatesHelper'                  => DatesHelper::class,
+            'HTMLHelper'                   => HTMLHelper::class,
+            'carbon'                       => Carbon::class,
+            'Config'                       => Config::class,
+            'Form'                         => Form::class,
         ]);
+    }
+
+
+    /**
+     * CREATE form
+     * GET /{table}/create
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('create'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to create ".$this->model->table_name;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->model->package_title,
+                'table_type_plural'    => $this->model->table,
+                'table_type_singular'  => strtolower($this->model->model_class),
+                'resource_route_name'  => $this->model->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
+        // Specifically for Post Updates
+        if (empty(Input::get('post_id'))) {
+            $post_id = 0;
+            //$related_table
+
+        } else {
+
+            $post_id = Input::get('post_id');
+
+            if ( (int) $post_id < 1 )
+            {
+                // flash message with redirect
+                Session::flash('status_code', 400 );
+                $message = 'Please initiate the creation of a new update for your post by clicking the icon ';
+                $message .= 'in the row of the post you want to update.';
+                Session::flash('message', $message);
+                return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+            }
+        }
+
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/create',
+        [
+            'post_id'                      => $post_id,
+            'repository'                   => $this->repository,
+            'package_title'                => $this->model->package_title,
+            'table_name'                   => $this->model->table_name,
+            'table_name_capitalized'       => ucwords($this->model->table),
+            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
+            'model_class'                  => $this->model->model_class,
+            'resource_route_name'          => $this->model->resource_route_name,
+            'field_list'                   => $this->model->field_list,
+            'namespace_formprocessor'      => $this->model->namespace_formprocessor,
+            'classname_formprocessor_create' => $this->model->classname_formprocessor_create,
+            'DatesHelper'                  => DatesHelper::class,
+            'HTMLHelper'                   => HTMLHelper::class,
+            'carbon'                       => Carbon::class,
+            'Config'                       => Config::class,
+            'Form'                         => Form::class,
+        ]);
+    }
+
+
+    /**
+     * Store a newly created resource in storage
+     * POST admin/{table}/create
+     *
+     * @param  Request   $request
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $response = $this->dispatchFrom(CreateCommand::class, $request);
+
+
+        Session::flash('status_code', $response['status_code'] );
+
+        if ($response['status_text'] == "validation_failed")
+        {
+            Session::flash('message', $response['errorMessages']->first());
+
+            // Return to the form with error messages
+            return Redirect::back()
+                ->withInput($response['data'])
+                ->withErrors($response['errorMessages']);
+        }
+
+
+        if ($response['status_text'] == "persist_failed")
+        {
+            $message = "Persist failed. It does not happen often, but Laravel's save failed. The database operation is called at Lasallecms\Lasallecmsapi\\".$this->model->table."\\".$this->model->classname_formprocessor_delete.". MySQL probably hiccupped, so probably just try again.";
+            Session::flash('message', $message);
+
+            // Return to the form with error messages
+            return Redirect::back()
+                ->withInput($response['data']);
+        }
+
+        $title = strtoupper($response['data']['title']);
+        $message = "You successfully created the ".strtolower($this->model->model_class)." ".$title."!";
+        Session::flash('message', $message);
+        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    }
+
+
+    /**
+     * Display the specified resource
+     * GET /{table}/{id}
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        // Do not use show(). Redir to index just in case
+        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    }
+
+
+    /**
+     * EDIT form
+     * GET /{table}/{id}/edit
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('edit'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to edit ".$this->model->table_name;
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->model->package_title,
+                'table_type_plural'    => $this->model->table_name,
+                'table_type_singular'  => strtolower($this->model->model_class),
+                'resource_route_name'  => $this->model->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
+
+        // Is this record locked?
+        if ($this->repository->isLocked($id))
+        {
+            $message = "This ".$this->model->model_class." is not available for editing, as someone else is currently editing this".$this->model->model_class;
+            Session::flash('message', $message);
+            Session::flash('status_code', 400 );
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+        // Lock the record
+        $this->repository->populateLockFields($id);
+
+
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/edit',
+        [
+            'repository'                   => $this->repository,
+            'record'                       => $this->repository->getFind($id),
+            'package_title'                => $this->model->package_title,
+            'table_name'                   => $this->model->table_name,
+            'table_name_capitalized'       => ucwords($this->model->table),
+            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
+            'model_class'                  => $this->model->model_class,
+            'resource_route_name'          => $this->model->resource_route_name,
+            'field_list'                   => $this->model->field_list,
+            'namespace_formprocessor'      => $this->model->namespace_formprocessor,
+            'classname_formprocessor_update' => $this->model->classname_formprocessor_update,
+            'DatesHelper'                  => DatesHelper::class,
+            'HTMLHelper'                   => HTMLHelper::class,
+            'carbon'                       => Carbon::class,
+            'Config'                       => Config::class,
+            'Form'                         => Form::class,
+        ]);
+    }
+
+
+    /**
+     * Update the specific post in the db
+     * PUT /{table}/{id}
+     *
+     * @param  Request   $request
+     * @return Response
+     */
+    public function update(Request $request)
+    {
+        $response = $this->dispatchFrom(UpdateCommand::class, $request);
+
+
+        Session::flash('status_code', $response['status_code'] );
+
+        if ($response['status_text'] == "validation_failed")
+        {
+            Session::flash('message', $response['errorMessages']->first());
+
+            // Return to the edit form with error messages
+            return Redirect::back()
+                ->withInput($response['data'])
+                ->withErrors($response['errorMessages']);
+        }
+
+
+        if ($response['status_text'] == "persist_failed")
+        {
+            $message = "Persist failed. It does not happen often, but Laravel's save failed. The database operation is called at Lasallecms\Lasallecmsapi\\".$this->model->table."\\".$this->model->classname_formprocessor_delete.". MySQL probably hiccupped, so probably just try again.";
+            Session::flash('message', $message);
+
+            // Return to the edit form with error messages
+            return Redirect::back()
+                ->withInput($response['data']);
+        }
+
+
+        $title = strtoupper($response['data']['title']);
+        $message = "Your ".$title." ".strtolower($this->model->model_class)." updated successfully!";
+        Session::flash('message', $message);
+        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    }
+
+
+    /**
+     * Remove the specific post from the db
+     * DELETE /{table}/{id}
+     *
+     * This method is not routed through a REQUEST, unfortunately. So,
+     * using a post collection as the array access-ible object. Remember,
+     * Laravel's command bus needs an array access-ible object!
+     * Also, note using $this->dispatch(), not $this->dispatchFrom().
+     *
+     * @param  int      $id     NOTE: *NOT* passing the REQUEST object
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        // Create the data array
+        $data = [
+            'id'                             => $id,
+            'classname_formprocessor_delete' => $this->model->classname_formprocessor_delete,
+            'namespace_formprocessor'        => $this->model->namespace_formprocessor,
+        ];
+
+
+        // Is this user allowed to do this?
+        if (!$this->repository->isUserAllowed('destroy'))
+        {
+            Session::flash('status_code', 400 );
+            $message = "You are not allowed to delete this".strtolower($this->model->model_class);
+            Session::flash('message', $message);
+            return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                'package_title'        => $this->model->package_title,
+                'table_type_plural'    => $this->model->table_name,
+                'table_type_singular'  => strtolower($this->model->model_class),
+                'resource_route_name'  => $this->model->resource_route_name,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
+        // Is this record not supposed to be deleted?
+        if ($this->repository->doNotDelete($id))
+        {
+            Session::flash('status_code', 400 );
+            $message = 'This '.strtolower($this->model->model_class).' is a core lookup record, so you cannot delete it';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+        // Is this record locked?
+        if ($this->repository->isLocked($id))
+        {
+            $response = 'This ".strtolower($this->model->model_class)." is not available for deletion, as someone else is currently editing this post';
+            Session::flash('message', $response);
+            Session::flash('status_code', 400 );
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+        $recordToBeDeleted = $this->model->findOrFail($id);
+        $response = $this->dispatch(new DeleteCommand($data));
+
+
+        Session::flash('status_code', $response['status_code'] );
+
+
+        if ($response['status_text'] == "foreign_key_check_failed")
+        {
+            $message = "Cannot delete this ".strtolower($this->model->model_class)." because it is in use.";
+            Session::flash('message', $message);
+
+            // Return to the index listing with error messages
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+        if ($response['status_text'] == "persist_failed")
+        {
+            $message = "Persist failed. It does not happen often, but Laravel's deletion failed. The database operation is called at Lasallecms\Lasallecmsapi\\".$this->model->table."\\".$this->model->classname_formprocessor_delete.". MySQL probably hiccupped, so probably just try again.";
+            Session::flash('message', $message);
+
+            // Return to the index listing with error messages
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+        $title = strtoupper($recordToBeDeleted->title);
+        $message = "You successfully deleted the ".strtolower($this->model->model_class)." ".$title."!";
+        Session::flash('message', $message);
+        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
 }

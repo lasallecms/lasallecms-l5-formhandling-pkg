@@ -1,0 +1,1 @@
+{!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field['name']) .': ') !!}

@@ -10,21 +10,21 @@
             {{-- form's title --}}
             <div class="row">
                 {!! $HTMLHelper::adminPageTitle($package_title, $table_type_plural, 'Lookup Table') !!}
-                <br /><br />
-                <h1>
-                        <span class="label label-info">
-                            {{{ (isset($record)) ? 'Edit the "'.$record->title.'"' : 'Create ' }}} {{{ $table_type_singular }}}
-                        </span>
-                </h1>
-                <br /><br />
-            </div> <!-- row -->
 
+                @if ( isset($record) )
+                    {!! $HTMLHelper::adminPageSubTitle($record, $table_type_singular) !!}
+                @else
+                    {!! $HTMLHelper::adminPageSubTitle(null, $table_type_singular) !!}
+                @endif
+            </div>
 
+            <br /><br />
 
             <div class="row">
 
                 @include('lasallecmsadmin::bob1.partials.message')
 
+                <div class="col-md-3"></div>
 
                 <div class="col-md-6">
 
@@ -124,6 +124,8 @@
 
 
                 </div> <!-- col-md-6 -->
+
+                <div class="col-md-3"></div>
 
             </div> <!-- row -->
 

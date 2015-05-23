@@ -2,17 +2,27 @@
 
 @section('content')
 
-    <!-- Start: Main content -->
+    <!-- Main content -->
     <section class="content">
-
 
         <div class="container">
 
-            <br /><br />
-            {!! $HTMLHelper::adminPageTitle($package_title, $table_type_plural, 'Lookup Table') !!}
+            {{-- form's title --}}
+            <div class="row">
+                <br /><br />
+                {!! $HTMLHelper::adminPageTitle($package_title, $table_type_plural, 'Lookup Table') !!}
+                <br /><br />
+            </div>
 
 
-            @include('lasallecmsadmin::bob1.partials.message')
+
+            <div class="row">
+
+                @include('lasallecmsadmin::bob1.partials.message')
+
+                <div class="col-md-1"></div>
+
+                <div class="col-md-11">
 
 
             @if (count($records))
@@ -55,9 +65,9 @@
                             </td>
                             <td align="center">
 
-                                {{-- If there is just one address type, then suppress the delete button --}}
-                                @if ( count($records) )
-
+                                @if ( (count($records) == 1) && ($suppress_delete_button_when_one_record) )
+                                    {{-- // blank on purpose --}}
+                                @else
                                     {!! Form::open(array('url' => 'admin/'.$resource_route_name.'/' . $record->id)) !!}
                                     {!! Form::model($record, array('route' => array('admin.'.$resource_route_name.'.destroy', $record->id), 'method' => 'DELETE')) !!}
 
@@ -86,10 +96,11 @@
                 {!! $HTMLHelper::adminCreateButton($resource_route_name, $table_type_singular, 'left') !!}
             @endif
 
-        </div> <!-- container -->
+                </div> <!-- col-md-11 -->
 
-        </div> <!-- content -->
-        <!-- End: Main content -->
+            </div> <!-- row -->
+
+        </div> <!-- container -->
 
     </section>
 

@@ -36,7 +36,7 @@ namespace Lasallecms\Formhandling\Lookuptables;
  *  * step-by-step controller = easy to follow what I am doing
  */
 
-# LaSalle Helpers
+// LaSalle Helpers
 use Lasallecms\Helpers\HTML\HTMLHelper;
 use Lasallecms\Helpers\Dates\DatesHelper;
 
@@ -56,7 +56,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 
 abstract class AdminLookupTableBaseController extends BaseController
 {
-
     use DispatchesCommands, ValidatesRequests;
 
     /*
@@ -114,6 +113,7 @@ abstract class AdminLookupTableBaseController extends BaseController
             'package_title'        => $this->package_title,
             'table_type_plural'    => $this->table_type_plural,
             'table_type_singular'  => $this->table_type_singular,
+            'suppress_delete_button_when_one_record' => $this->suppress_delete_button_when_one_record,
             'resource_route_name'  => $this->resource_route_name,
             'DatesHelper'          => DatesHelper::class,
             'HTMLHelper'           => HTMLHelper::class,
