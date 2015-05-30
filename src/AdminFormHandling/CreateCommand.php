@@ -73,7 +73,6 @@ class CreateCommand extends Command implements SelfHandling
             $newCreateCommand->$field['name'] = Input::get($field['name']);
         }
 
-
         // Get the namespace and class name of the Form Processor class
         $namespace_formprocessor        = $this->getNamespaceFormprocessor();
         $classname_formprocessor_create = $this->getClassnameFormprocessorCreate();

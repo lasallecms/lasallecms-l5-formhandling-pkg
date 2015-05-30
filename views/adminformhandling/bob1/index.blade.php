@@ -40,7 +40,6 @@
                     {{-- the table! --}}
                     <table id="table_id" class="table table-striped table-bordered table-hover" data-order='[[ 4, "desc" ]]' data-page-length='25'>
 
-
                         @include('formhandling::adminformhandling.bob1.render_table_header_fields_index')
 
                         @include('formhandling::adminformhandling.bob1.render_table_body_fields_index')

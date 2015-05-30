@@ -4,7 +4,7 @@
         @foreach ($field_list as $field)
 
             @if ( !$field['index_skip'] )
-                <th style="text-align: center;">{!! $HTMLHelper::adminFormFieldLabel($field['name']) !!}</th>
+                <th style="text-align: center;">{!! $HTMLHelper::adminFormFieldLabel($field) !!}</th>
             @endif
 
         @endforeach

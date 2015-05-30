@@ -1,13 +1,15 @@
 <tbody>
     @foreach ($records as $record)
         <tr>
+
             @foreach ($field_list as $field)
                 @if ( !$field['index_skip'] )
 
-                    @if ( ( $field['index_align'] == "" ) || ( strtolower($field['index_align']) == "centre" ) || ( strtolower($field['index_align']) == "center" ) )
-                        <td align="center">
-                    @else
+
+                    @if ( (empty($field['index_align'])) || ($field['index_align'] == "") || (strtolower($field['index_align']) == "left")  )
                         <td align="left">
+                    @else
+                        <td align="center">
                     @endif
 
 
@@ -33,23 +35,18 @@
                     @endif
 
                     @if ( $field['type'] == "date")
-                         {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->$field['name']) !!}
+                        {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->$field['name']) !!}
                     @endif
 
                     @if ( $field['type'] == "related_table" )
 
-                        @if ($field['related_pivot_table'])
-                             {!! $HTMLHelper::listSingleCollectionElementOnSeparateRow($repository->getLookupTableRecordsAssociatedByParentId(strtolower($field['related_model_class']), $record->id)) !!}
+                        @if ( !empty($field['related_pivot_table']))
+                            {!! $HTMLHelper::listSingleCollectionElementOnSeparateRow($repository->getLookupTableRecordsAssociatedByParentId(strtolower($field['related_model_class']), $record->id)) !!}
                         @else
-                             {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->post_id)  !!}
-
-
+                            {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->$field['name'])  !!}
                         @endif
                     @endif
 
-
-
-                    </td>
                 @endif
             @endforeach
 

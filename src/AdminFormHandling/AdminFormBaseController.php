@@ -115,7 +115,6 @@ abstract class AdminFormBaseController extends BaseController
         // If this user has locked records for this table, then unlock 'em
         $this->repository->unlockMyRecords($this->model->table);
 
-
         return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/index',
         [
             'records'                      => $this->repository->getAll(),
@@ -213,7 +212,6 @@ abstract class AdminFormBaseController extends BaseController
     {
         $response = $this->dispatchFrom(CreateCommand::class, $request);
 
-
         Session::flash('status_code', $response['status_code'] );
 
         if ($response['status_text'] == "validation_failed")
@@ -237,8 +235,12 @@ abstract class AdminFormBaseController extends BaseController
                 ->withInput($response['data']);
         }
 
-        $title = strtoupper($response['data']['title']);
-        $message = "You successfully created the ".strtolower($this->model->model_class)." ".$title."!";
+        if ( empty($response['data']['title']) )
+        {
+            $message =  "You successfully created your new ".strtolower($this->model->model_class)."!";
+        } else {
+            $message =  "You successfully created the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
+        }
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
@@ -353,8 +355,20 @@ abstract class AdminFormBaseController extends BaseController
         }
 
 
-        $title = strtoupper($response['data']['title']);
-        $message = "Your ".$title." ".strtolower($this->model->model_class)." updated successfully!";
+        if ( empty($response['data']['title']) )
+        {
+
+            if (!empty($response['data']['composite_title']))
+            {
+                $message = "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['composite_title'])."!";
+
+            } else {
+                $message =  "You successfully updated your new ".strtolower($this->model->model_class)."!";
+            }
+
+        } else {
+            $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
+        }
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
@@ -444,8 +458,12 @@ abstract class AdminFormBaseController extends BaseController
         }
 
 
-        $title = strtoupper($recordToBeDeleted->title);
-        $message = "You successfully deleted the ".strtolower($this->model->model_class)." ".$title."!";
+        if ( empty($recordToBeDeleted->title) )
+        {
+            $message =  "You successfully deleted the record!";
+        } else {
+            $message =  "You successfully deleted the ".strtolower($this->model->model_class)." ".strtoupper($recordToBeDeleted->title)."!";
+        }
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }

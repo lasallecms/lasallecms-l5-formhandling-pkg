@@ -32,7 +32,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "int" )
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 @if ( $field['name'] == "id" )
@@ -51,7 +51,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "varchar" )
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 {!! Form::input('text', $field['name'], Input::old($field['name'], $record->$field['name'])) !!}
@@ -65,7 +65,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "boolean" )
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 {!! Form::checkbox($field['name'], '1', Input::old($field['name'],  $record->$field['name'])) !!}
@@ -79,7 +79,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "text-with-editor" )
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}1">
@@ -100,7 +100,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "text-no-editor" )
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', $record->$field['name'])  !!}</textarea>
@@ -115,7 +115,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "date")
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 {!! Form::input('date', $field['name'], Input::old($field['name'], $record->$field['name'])) !!}
@@ -130,10 +130,10 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( ($field['type'] == "related_table") && ($field['name'] != "post_id") )
         <tr>
             <td>
-                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field['name']) .': ') !!}
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! $repository->multipleSelectFromRelatedTableEdit($field['related_table_name'], $field['related_model_class'], $record->id) !!}
+                {!! $repository->determineSelectFormFieldToRenderFromRelatedTable($field, 'update', $record->id) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -144,7 +144,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( ($field['type'] == "related_table") && ($field['name'] == "post_id") )
         <tr>
             <td>
-                <strong>{!! $HTMLHelper::adminFormFieldLabel($field['name']) !!}:</strong>
+                <strong>{!! $HTMLHelper::adminFormFieldLabel($field) !!}:</strong>
             </td>
             <td>
                 <strong>
@@ -161,7 +161,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "email")
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 {!! Form::email($field['name'], Input::old($field['name'],$record->$field['name'])) !!}
@@ -174,7 +174,7 @@ There are standard fields that I am using, that make this automation a bit easie
     @if ( $field['type'] == "password")
         <tr>
             <td>
-                @include('formhandling::adminformhandling.bob1.form-label')
+                {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
                 {!! Form::password($field['name']) !!}
