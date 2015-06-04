@@ -121,8 +121,6 @@ abstract class AdminFormBaseController extends BaseController
             'repository'                   => $this->repository,
             'package_title'                => $this->model->package_title,
             'table_name'                   => $this->model->table,
-            'table_name_capitalized'       => ucwords($this->model->table),
-            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
             'field_list'                   => $this->model->field_list,
@@ -148,7 +146,7 @@ abstract class AdminFormBaseController extends BaseController
         if (!$this->repository->isUserAllowed('create'))
         {
             Session::flash('status_code', 400 );
-            $message = "You are not allowed to create ".$this->model->table_name;
+            $message = "You are not allowed to create ".$this->model->table;
             Session::flash('message', $message);
             return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
                 'package_title'        => $this->model->package_title,
@@ -179,14 +177,36 @@ abstract class AdminFormBaseController extends BaseController
             }
         }
 
+        // Are there mandatory related tables that have no records? If so, can't create/edit
+        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->model->field_list);
+
+        if ($isNotNullableRelatedTablesWithNoRecords['mandatory_no_records'])
+        {
+            Session::flash('status_code', 400 );
+            $message  = "You are not allowed to create ".HTMLHelper::pluralToSingular($this->model->table)." because ";
+            $message .= "there are no enabled records in the ";
+
+            if ( !empty($isNotNullableRelatedTablesWithNoRecords['field']['alternate_form_name']) )
+            {
+                $message .= $isNotNullableRelatedTablesWithNoRecords['field']['alternate_form_name'];
+            } else {
+                $message .= $isNotNullableRelatedTablesWithNoRecords['field']['name'];
+            }
+
+            $message .= ' table. You must add enabled records to the "';
+            $message .= $isNotNullableRelatedTablesWithNoRecords['field']['related_table_name'];
+
+            $message .= '" table first!';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
         return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/create',
         [
             'post_id'                      => $post_id,
             'repository'                   => $this->repository,
             'package_title'                => $this->model->package_title,
-            'table_name'                   => $this->model->table_name,
-            'table_name_capitalized'       => ucwords($this->model->table),
-            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
+            'table_name'                   => $this->model->table,
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
             'field_list'                   => $this->model->field_list,
@@ -272,11 +292,11 @@ abstract class AdminFormBaseController extends BaseController
         if (!$this->repository->isUserAllowed('edit'))
         {
             Session::flash('status_code', 400 );
-            $message = "You are not allowed to edit ".$this->model->table_name;
+            $message = "You are not allowed to edit ".$this->model->table;
             Session::flash('message', $message);
             return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
                 'package_title'        => $this->model->package_title,
-                'table_type_plural'    => $this->model->table_name,
+                'table_type_plural'    => $this->model->table,
                 'table_type_singular'  => strtolower($this->model->model_class),
                 'resource_route_name'  => $this->model->resource_route_name,
                 'HTMLHelper'           => HTMLHelper::class,
@@ -287,7 +307,9 @@ abstract class AdminFormBaseController extends BaseController
         // Is this record locked?
         if ($this->repository->isLocked($id))
         {
-            $message = "This ".$this->model->model_class." is not available for editing, as someone else is currently editing this".$this->model->model_class;
+            $modelClass = HTMLHelper::properPlural($this->model->model_class);
+
+            $message = "This ".$modelClass." is not available for editing, as someone else is currently editing this ".$modelClass.".";
             Session::flash('message', $message);
             Session::flash('status_code', 400 );
             return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
@@ -296,15 +318,37 @@ abstract class AdminFormBaseController extends BaseController
         // Lock the record
         $this->repository->populateLockFields($id);
 
+        // Are there mandatory related tables that have no records? If so, can't create/edit
+        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->model->field_list);
+
+        if ($isNotNullableRelatedTablesWithNoRecords['mandatory_no_records'])
+        {
+            Session::flash('status_code', 400 );
+            $message  = "You are not allowed to update ".HTMLHelper::pluralToSingular($this->model->table)." because ";
+            $message .= "there are no enabled records in the ";
+
+            if ( !empty($isNotNullableRelatedTablesWithNoRecords['field']['alternate_form_name']) )
+            {
+                $message .= $isNotNullableRelatedTablesWithNoRecords['field']['alternate_form_name'];
+            } else {
+                $message .= $isNotNullableRelatedTablesWithNoRecords['field']['name'];
+            }
+
+            $message .= ' table. You must add enabled records to the "';
+            $message .= $isNotNullableRelatedTablesWithNoRecords['field']['related_table_name'];
+
+            $message .= '" table first!';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
 
         return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/edit',
         [
             'repository'                   => $this->repository,
             'record'                       => $this->repository->getFind($id),
             'package_title'                => $this->model->package_title,
-            'table_name'                   => $this->model->table_name,
-            'table_name_capitalized'       => ucwords($this->model->table),
-            'table_name_singular_lowercase'=> strtolower($this->model->model_class),
+            'table_name'                   => $this->model->table,
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
             'field_list'                   => $this->model->field_list,
@@ -404,7 +448,7 @@ abstract class AdminFormBaseController extends BaseController
             Session::flash('message', $message);
             return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
                 'package_title'        => $this->model->package_title,
-                'table_type_plural'    => $this->model->table_name,
+                'table_type_plural'    => $this->model->table,
                 'table_type_singular'  => strtolower($this->model->model_class),
                 'resource_route_name'  => $this->model->resource_route_name,
                 'HTMLHelper'           => HTMLHelper::class,

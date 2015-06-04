@@ -148,7 +148,7 @@ There are standard fields that I am using, that make this automation a bit easie
             </td>
             <td>
                 <strong>
-                    ({{{ ($record->post_id) }}})  {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->post_id)  !!}
+                    {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->post_id)  !!}
                 </strong>
 
                 <input name="post_id" type="hidden" value="{{{ $record->post_id }}}">

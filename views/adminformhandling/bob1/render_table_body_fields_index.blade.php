@@ -38,9 +38,13 @@
                         {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->$field['name']) !!}
                     @endif
 
+                    @if ( $field['type'] == "email" )
+                        {!! $record->$field['name'] !!}
+                    @endif
+
                     @if ( $field['type'] == "related_table" )
 
-                        @if ( !empty($field['related_pivot_table']))
+                        @if ( !empty($field['related_pivot_table']) )
                             {!! $HTMLHelper::listSingleCollectionElementOnSeparateRow($repository->getLookupTableRecordsAssociatedByParentId(strtolower($field['related_model_class']), $record->id)) !!}
                         @else
                             {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->$field['name'])  !!}
@@ -67,7 +71,7 @@
                     {!! Form::open(array('url' => 'admin/'.$resource_route_name.'/' . $record->id)) !!}
                     {!! Form::model($record, array('route' => array('admin.'.$resource_route_name.'.destroy', $record->id), 'method' => 'DELETE')) !!}
 
-                    <button type="submit" class="btn btn-danger btn-xs" data-confirm="Do you really want to DELETE the {!! strtoupper($record->title) !!} {!! strtolower($table_name_singular_lowercase) !!}?">
+                    <button type="submit" class="btn btn-danger btn-xs" data-confirm="Do you really want to DELETE the {!! strtoupper($record->title) !!} {!! strtolower($model_class) !!}?">
                         <i class="glyphicon glyphicon-remove"></i>
                     </button>
 

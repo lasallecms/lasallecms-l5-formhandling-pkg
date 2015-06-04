@@ -10,7 +10,7 @@
             {{-- form's title --}}
             <div class="row">
                 <br /><br />
-                {!! $HTMLHelper::adminPageTitle($package_title, ($table_name_capitalized), '') !!}
+                {!! $HTMLHelper::adminPageTitle($package_title, (ucwords($table_name)), '') !!}
                 {!! $HTMLHelper::adminPageSubTitle($record, $model_class) !!}
                 <br /><br />
             </div>
@@ -45,7 +45,7 @@
                                 <input name="crud_action" type="hidden" value="update">
 
                                 {{-- Submit and cancel buttons --}}
-                                {!! Form::submit( 'Edit '.$model_class.'!') !!}
+                                {!! Form::submit( 'Edit '.ucwords($HTMLHelper::properPlural($model_class)).'!' ) !!}
                                 {!! $HTMLHelper::back_button('Cancel') !!}
                             </td>
                         </tr>

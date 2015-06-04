@@ -10,7 +10,7 @@
             {{-- form's title --}}
             <div class="row">
                 <br /><br />
-                {!! $HTMLHelper::adminPageTitle($package_title, ($table_name_capitalized), '') !!}
+                {!! $HTMLHelper::adminPageTitle($package_title, (ucwords($table_name)), '') !!}
                 <br /><br />
             </div>
 
@@ -49,7 +49,7 @@
                 @else
                     <br /><br />
                     <h2>
-                        There are no {{{ $table_name }}}. Go ahead, create your first {{{ $table_name_singular_lowercase }}}!
+                        There are no {!! strtolower($HTMLHelper::properPlural($table_name)) !!}. Go ahead, create your first {!! strtolower($HTMLHelper::properPlural($model_class)) !!}!
                     </h2>
 
                     <br />
@@ -57,7 +57,7 @@
                     @if ($resource_route_name == "postupdates")
                          {!! $HTMLHelper::adminIndexButton('posts', 'Go to the Posts listing to create a new post update', 'left') !!}
                     @else
-                         {!! $HTMLHelper::adminCreateButton($resource_route_name, $table_name_singular_lowercase, 'left') !!}
+                         {!! $HTMLHelper::adminCreateButton($resource_route_name, strtolower($model_class), 'left') !!}
                     @endif
 
                 @endif

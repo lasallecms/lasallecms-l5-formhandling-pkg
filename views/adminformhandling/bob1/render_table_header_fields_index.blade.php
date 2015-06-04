@@ -9,8 +9,8 @@
 
         @endforeach
 
-        <th style="text-align: center;">Edit<br />{!! $model_class !!}</th>
-        <th style="text-align: center;">Delete<br />{!! $model_class !!}</th>
+        <th style="text-align: center;">Edit<br />{!! ucwords($HTMLHelper::pluralToSingular($model_class)) !!}</th>
+        <th style="text-align: center;">Delete<br />{!! ucwords($HTMLHelper::pluralToSingular($model_class)) !!}</th>
 
             {{-- FOR POSTS ONLY: THE POSTUPDATE BUTTON! --}}
             @if ( $table_name == "posts" )

@@ -10,7 +10,7 @@
             {{-- form's title --}}
             <div class="row">
                 <br /><br />
-                {!! $HTMLHelper::adminPageTitle($package_title, ($table_name_capitalized), '') !!}
+                {!! $HTMLHelper::adminPageTitle($package_title, (ucwords($table_name)), '') !!}
                 {!! $HTMLHelper::adminPageSubTitle(null, $model_class) !!}
                 <br /><br />
             </div>
@@ -44,7 +44,7 @@
 
 
                                 {{-- Submit and cancel buttons --}}
-                                {!! Form::submit( 'Create '.$model_class.'!') !!}
+                                {!! Form::submit( 'Create '.ucwords($HTMLHelper::properPlural($model_class)).'!' ) !!}
                                 {!! $HTMLHelper::back_button('Cancel') !!}
                             </td>
                         </tr>
