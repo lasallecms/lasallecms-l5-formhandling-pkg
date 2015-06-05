@@ -27,6 +27,19 @@
                     {{-- the table! --}}
                     <table class="table table-striped table-bordered table-condensed table-hover">
 
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td align="right">
+                                {{-- Submit and cancel buttons --}}
+                                {!! Form::submit( 'Create '.ucwords($HTMLHelper::properPlural($model_class)).'!' ) !!}
+                                {!! $HTMLHelper::back_button('Cancel') !!}
+                            </td>
+                        </tr>
+
+                        <tr><td colspan="2"></td></tr>
+
                         @include('formhandling::adminformhandling.bob1.render_fields_create')
 
                         <tr><td colspan="2"></td></tr>

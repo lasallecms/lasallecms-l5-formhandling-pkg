@@ -18,7 +18,7 @@
                     @endif
 
                     @if ( $field['type'] == "varchar" )
-                        {!! $record->$field['name'] !!}
+                        {!! $HTMLHelper::finagleVarcharFieldTypeForIndexListing($field,$record->$field['name']) !!}
                     @endif
 
                     @if ( $field['type'] == "boolean" )
