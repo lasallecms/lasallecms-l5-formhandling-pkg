@@ -117,6 +117,7 @@ abstract class AdminFormBaseController extends BaseController
 
         return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/index',
         [
+            'display_the_view_button'      => $this->model->display_the_view_button,
             'records'                      => $this->repository->getAll(),
             'repository'                   => $this->repository,
             'package_title'                => $this->model->package_title,
@@ -273,9 +274,32 @@ abstract class AdminFormBaseController extends BaseController
      * @param  int  $id
      * @return Response
      */
-    public function show($id) {
-        // Do not use show(). Redir to index just in case
-        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    public function show($id)
+    {
+        if ($this->model->display_the_view_button)
+        {
+            return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/show',
+                [
+                    'display_the_view_button'      => $this->model->display_the_view_button,
+                    'repository'                   => $this->repository,
+                    'record'                       => $this->repository->getFind($id),
+                    'package_title'                => $this->model->package_title,
+                    'table_name'                   => $this->model->table,
+                    'model_class'                  => $this->model->model_class,
+                    'resource_route_name'          => $this->model->resource_route_name,
+                    'field_list'                   => $this->model->field_list,
+                    'namespace_formprocessor'      => $this->model->namespace_formprocessor,
+                    'classname_formprocessor_update' => $this->model->classname_formprocessor_update,
+                    'DatesHelper'                  => DatesHelper::class,
+                    'HTMLHelper'                   => HTMLHelper::class,
+                    'carbon'                       => Carbon::class,
+                    'Config'                       => Config::class,
+                    'Form'                         => Form::class,
+                ]);
+
+        } else {
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
     }
 
 

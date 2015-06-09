@@ -9,13 +9,17 @@
 
         @endforeach
 
+        @if ($display_the_view_button)
+            <th style="text-align: center;">View<br />{!! ucwords($HTMLHelper::pluralToSingular($model_class)) !!}</th>
+        @endif
+
         <th style="text-align: center;">Edit<br />{!! ucwords($HTMLHelper::pluralToSingular($model_class)) !!}</th>
         <th style="text-align: center;">Delete<br />{!! ucwords($HTMLHelper::pluralToSingular($model_class)) !!}</th>
 
-            {{-- FOR POSTS ONLY: THE POSTUPDATE BUTTON! --}}
-            @if ( $table_name == "posts" )
-                <th style="text-align: center;">Add a New Update</th>
-            @endif
+        {{-- FOR POSTS ONLY: THE POSTUPDATE BUTTON! --}}
+        @if ( $table_name == "posts" )
+            <th style="text-align: center;">Add a New Update</th>
+        @endif
 
     </tr>
 

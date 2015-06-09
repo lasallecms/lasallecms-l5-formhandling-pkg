@@ -55,6 +55,15 @@
             @endforeach
 
 
+            @if ($display_the_view_button)
+                {{-- SHOW BUTTON --}}
+                <td align="center">
+                    <a href="{{{ URL::route('admin.'.$resource_route_name.'.show', $record->id) }}}" class="btn btn-success  btn-xs" role="button">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                </td>
+            @endif
+
             {{-- EDIT BUTTON --}}
             <td align="center">
                 <a href="{{{ URL::route('admin.'.$resource_route_name.'.edit', $record->id) }}}" class="btn btn-success  btn-xs" role="button">
