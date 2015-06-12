@@ -15,7 +15,7 @@
 
 In config/app.php:
 ```
-'Lasallecms\Formhandling\FormHandlingServiceProvider',
+Lasallecms\Formhandling\FormHandlingServiceProvider::class,
 ```
 
 
