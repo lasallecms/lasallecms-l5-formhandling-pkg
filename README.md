@@ -6,7 +6,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/lasallecms/formhandling/v/unstable.svg)](https://packagist.org/packages/lasallecms/formhandling)
 [![GitHub Issues](https://img.shields.io/github/issues/lasallecms/lasallecms-l5-formhandling-pkg.svg)](https://github.com/lasallecms/lasallecms-l5-formhandling-pkg/issues)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Laravel](https://img.shields.io/badge/Laravel-v5-brightgreen.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-v5.1-brightgreen.svg?style=flat-square)](http://laravel.com)
 
 
 Form handling package made specifically for my LaSalle Content Management System. 

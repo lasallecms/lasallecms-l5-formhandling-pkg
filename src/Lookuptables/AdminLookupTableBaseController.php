@@ -49,14 +49,14 @@ use Illuminate\Support\Facades\Validator;
 
 // Laravel classes
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Bus\DispatchesCommands;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
 // Note that the template is the same name as the one specified in the LaSalleCMS Admin package's config
 
 abstract class AdminLookupTableBaseController extends BaseController
 {
-    use DispatchesCommands, ValidatesRequests;
+    use DispatchesJobs, ValidatesRequests;
 
     /*
      * @var namespace/class of the relevant model

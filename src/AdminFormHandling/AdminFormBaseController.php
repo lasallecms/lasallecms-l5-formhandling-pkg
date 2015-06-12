@@ -40,7 +40,7 @@ use Lasallecms\Formhandling\AdminFormhandling\DeletePostCommand;
 
 // Laravel classes
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Bus\DispatchesCommands;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 
@@ -60,7 +60,7 @@ use Collective\Html\FormFacade as Form;
 
 abstract class AdminFormBaseController extends BaseController
 {
-    use DispatchesCommands, ValidatesRequests;
+    use DispatchesJobs, ValidatesRequests;
 
     /*
      * Repository

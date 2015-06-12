@@ -33,14 +33,14 @@ namespace Lasallecms\Formhandling\AdminFormhandling;
 use Lasallecms\Formhandling\AdminFormhandling\Command;
 
 // Laravel classes
-use Illuminate\Foundation\Bus\DispatchesCommands;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Container\Container as Container;
 
 
 class DeleteCommand extends Command implements SelfHandling
 {
-    use DispatchesCommands;
+    use DispatchesJobs;
 
     /*
      * Grab the ID
