@@ -47,13 +47,13 @@
                 <div class="col-md-3">
 
                     <a href="{{{ URL::route('admin.'.$resource_route_name.'.edit', $record->id) }}}" class="btn btn-success  btn-lg" role="button">
-                        <i class="glyphicon glyphicon-edit"></i>  Edit this {{{ $model_class }}}
+                        <i class="glyphicon glyphicon-edit"></i>  Edit this {!! strtolower($HTMLHelper::properPlural($model_class)) !!}
                     </a>
 
                     <br /><br />
 
                     <a href="{{{ URL::route('admin.'.$resource_route_name.'.index') }}}" class="btn btn-success  btn-lg" role="button">
-                        <i class="glyphicon glyphicon-list-alt"></i>  Return to the {{{ $model_class }}} Listing
+                        <i class="glyphicon glyphicon-list-alt"></i>  Return to the {!! strtolower($HTMLHelper::properPlural($model_class)) !!} Listing
                     </a>
 
 
