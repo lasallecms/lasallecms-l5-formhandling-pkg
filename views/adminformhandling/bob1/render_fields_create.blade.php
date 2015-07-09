@@ -62,7 +62,7 @@ There are standard fields that I am using, that make this automation a bit easie
      @endif
 
 
-    @if ( $field['type'] == "boolean" )
+    @if ( ($field['type'] == "boolean") && ($field['name'] != "postupdate") )
         <tr>
             <td>
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
@@ -183,6 +183,12 @@ There are standard fields that I am using, that make this automation a bit easie
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
         </tr>
+    @endif
+
+
+
+    @if ( ($field['type'] == "boolean") && ($field['name'] == "postupdate") )
+        <input name="postupdate" type="hidden" value="false">
     @endif
 
 
