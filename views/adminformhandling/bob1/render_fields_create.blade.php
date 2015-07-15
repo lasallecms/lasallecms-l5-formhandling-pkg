@@ -86,7 +86,7 @@ There are standard fields that I am using, that make this automation a bit easie
                     {!! Input::old($field['name'], '')  !!}
                 </textarea>
 
-                <script type="text/javascript" src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecms.public_folder') }}}/packages/lasallecmsadmin/bob1/ckeditor/ckeditor.js"></script>
+                <script type="text/javascript" src="{{{ Config::get('app.url') }}}/packages/lasallecmsadmin/bob1/ckeditor/ckeditor.js"></script>
 
                 {!! "<script>CKEDITOR.replace('".$field['name']."');</script>" !!}
 
