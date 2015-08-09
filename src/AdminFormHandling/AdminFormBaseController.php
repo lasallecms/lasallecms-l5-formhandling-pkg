@@ -1,4 +1,5 @@
 <?php
+
 namespace Lasallecms\Formhandling\AdminFormhandling;
 
 /**
@@ -124,7 +125,7 @@ abstract class AdminFormBaseController extends BaseController
             'table_name'                   => $this->model->table,
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
-            'field_list'                   => $this->model->field_list,
+            'field_list'                   => $this->getFieldList(),
             'suppress_delete_button_when_one_record' => $this->model->suppress_delete_button_when_one_record,
             'DatesHelper'                  => DatesHelper::class,
             'HTMLHelper'                   => HTMLHelper::class,
@@ -179,7 +180,7 @@ abstract class AdminFormBaseController extends BaseController
         }
 
         // Are there mandatory related tables that have no records? If so, can't create/edit
-        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->model->field_list);
+        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->getFieldList());
 
         if ($isNotNullableRelatedTablesWithNoRecords['mandatory_no_records'])
         {
@@ -210,7 +211,7 @@ abstract class AdminFormBaseController extends BaseController
             'table_name'                   => $this->model->table,
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
-            'field_list'                   => $this->model->field_list,
+            'field_list'                   => $this->getFieldList(),
             'namespace_formprocessor'      => $this->model->namespace_formprocessor,
             'classname_formprocessor_create' => $this->model->classname_formprocessor_create,
             'DatesHelper'                  => DatesHelper::class,
@@ -231,6 +232,8 @@ abstract class AdminFormBaseController extends BaseController
      */
     public function store(Request $request)
     {
+   
+    
         $response = $this->dispatchFrom(CreateCommand::class, $request);
 
         Session::flash('status_code', $response['status_code'] );
@@ -287,7 +290,7 @@ abstract class AdminFormBaseController extends BaseController
                     'table_name'                   => $this->model->table,
                     'model_class'                  => $this->model->model_class,
                     'resource_route_name'          => $this->model->resource_route_name,
-                    'field_list'                   => $this->model->field_list,
+                    'field_list'                   => $this->getFieldList(),
                     'namespace_formprocessor'      => $this->model->namespace_formprocessor,
                     'classname_formprocessor_update' => $this->model->classname_formprocessor_update,
                     'DatesHelper'                  => DatesHelper::class,
@@ -343,7 +346,7 @@ abstract class AdminFormBaseController extends BaseController
         $this->repository->populateLockFields($id);
 
         // Are there mandatory related tables that have no records? If so, can't create/edit
-        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->model->field_list);
+        $isNotNullableRelatedTablesWithNoRecords = $this->repository->isNotNullableRelatedTablesWithNoRecords($this->getFieldList());
 
         if ($isNotNullableRelatedTablesWithNoRecords['mandatory_no_records'])
         {
@@ -375,7 +378,7 @@ abstract class AdminFormBaseController extends BaseController
             'table_name'                   => $this->model->table,
             'model_class'                  => $this->model->model_class,
             'resource_route_name'          => $this->model->resource_route_name,
-            'field_list'                   => $this->model->field_list,
+            'field_list'                   => $this->getFieldList(),
             'namespace_formprocessor'      => $this->model->namespace_formprocessor,
             'classname_formprocessor_update' => $this->model->classname_formprocessor_update,
             'DatesHelper'                  => DatesHelper::class,
@@ -534,5 +537,26 @@ abstract class AdminFormBaseController extends BaseController
         }
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    }
+
+
+
+    //////////////////////////////////////////////////////////////
+    ////                Utility type methods                  ////
+    //////////////////////////////////////////////////////////////
+
+    /**
+     * get the Model's Field List
+     *
+     * @return array
+     */
+    public function getFieldLIst()
+    {
+        if (!isset($this->model->field_list)) {
+
+            return $this->model->getFieldList();
+        }
+
+        return $this->model->field_list;
     }
 }
