@@ -85,9 +85,11 @@ class FormHandlingServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../views', 'formhandling');
 
+/*
         $this->publishes([
             __DIR__.'/../views' => base_path('resources/views/vendor/formhandling'),
         ]);
+*/
 
     }
 
