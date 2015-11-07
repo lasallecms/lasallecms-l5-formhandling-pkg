@@ -445,6 +445,20 @@ abstract class AdminFormBaseController extends BaseController
     }
 
 
+
+
+
+
+    public function confirmDeletion(Request $request)
+    {
+        echo "<hr><h1>Ya wanna delete?</h1>";
+        dd("AdminFormBaseController::confirmDeletion");
+    }
+
+
+
+
+
     /**
      * Remove the specific post from the db
      * DELETE /{table}/{id}
