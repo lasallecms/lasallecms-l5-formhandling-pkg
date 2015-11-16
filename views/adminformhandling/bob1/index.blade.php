@@ -38,7 +38,7 @@
                         {{-- http://datatables.net/manual/options --}}
 
                         {{-- the table! --}}
-                        <table id="table_id" class="table table-striped table-bordered table-hover" data-order='[[ 4, "desc" ]]' data-page-length='25'>
+                        <table id="table_id" class="table table-striped table-bordered table-hover" data-order='[[ 1, "desc" ]]' data-page-length='100'>
 
                             @include('formhandling::adminformhandling.bob1.render_table_header_fields_index')
 
