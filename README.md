@@ -1,4 +1,4 @@
-# LOOKUP TABLES ADMIN HANDLING
+# FORM HANDLING PACKAGE
 
 [![Build Status](https://img.shields.io/travis/lasallecms/lasallecms-l5-formhandling-pkg/master.svg?style=flat-square)](https://travis-ci.org/lasallecms/lasallecms-l5-formhandling-pkg)
 [![Total Downloads](https://img.shields.io/packagist/dt/lasallecms/formhandling.svg?style=flat-square)](https://packagist.org/packages/lasallecms/formhandling)
