@@ -448,11 +448,34 @@ abstract class AdminFormBaseController extends BaseController
 
 
 
-
-    public function confirmDeletion(Request $request)
+    /**
+     * Confirm the deletion
+     *
+     * The javascript that I use works everywhere except for posts. I thought, well,
+     * I tend to be distracted when I do deletions; plus, I have a funny type of
+     * muscle memory when it comes to gray system-ish model pop-up message boxes.
+     * When a system confirm pops-up, 99% I click "ok". I should have a confirmation
+     * that actually gets my attention -- and to use the trick where "cancel" on the right
+     * due to "ok" muscle memory tendency.
+     *
+     * @param  int      $id     NOTE: *NOT* passing the REQUEST object
+     * @return Response
+     */
+    public function confirmDeletion($id)
     {
-        echo "<hr><h1>Ya wanna delete?</h1>";
-        dd("AdminFormBaseController::confirmDeletion");
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/delete_confirm',
+            [
+                'user'                         => Auth::user(),
+                'repository'                   => $this->repository,
+                'record'                       => $this->repository->getFind($id),
+                'package_title'                => $this->model->package_title,
+                'table_name'                   => $this->model->table,
+                'model_class'                  => $this->model->model_class,
+                'resource_route_name'  => $this->model->resource_route_name,
+                'HTMLHelper'                   => HTMLHelper::class,
+                'Config'                       => Config::class,
+                'Form'                         => Form::class,
+            ]);
     }
 
 

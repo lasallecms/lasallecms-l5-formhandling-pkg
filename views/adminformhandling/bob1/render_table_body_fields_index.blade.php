@@ -77,14 +77,16 @@
                 @if ( (count($records) == 1) && ($suppress_delete_button_when_one_record) )
                     {{-- // blank on purpose --}}
                 @else
+                    <form method="POST" action="{{{ Config::get('app.url') }}}/index.php/admin/{{ $resource_route_name }}/confirmDeletion/{{ $record->id }}" accept-charset="UTF-8">
+                        {{{ csrf_field() }}}
 
-                    {!! Form::model($record, array('route' => array('admin.'.$resource_route_name.'.confirmDeletion', $record->id))) !!}
+                        <button type="submit" class="btn btn-danger btn-xs">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
 
-                    <button type="submit" class="btn btn-danger btn-xs">
-                        <i class="glyphicon glyphicon-remove"></i>
-                    </button>
+                    </form>
 
-                    {!! Form::close() !!}
+
                 @endif
             </td>
 
