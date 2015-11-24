@@ -36,7 +36,9 @@
                                 <hr />
                                 Do you really want to delete the {{ strtolower($model_class) }}:
                                 <br /><br />
-                                "<em>{{ $record->title }}</em>" (ID #{{ $record->id }})?
+                                "<em>{{ $record->title }}</em>"
+                                <br />
+                                (ID #{{ $record->id }})?
                             </h1>
                             <hr />
                             <p>&nbsp;</p>
