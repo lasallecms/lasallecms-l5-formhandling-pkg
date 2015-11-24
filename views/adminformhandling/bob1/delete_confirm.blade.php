@@ -34,7 +34,7 @@
                                 <hr />
                                 Just want to confirm this deletion with you first.
                                 <hr />
-                                Do you really want to delete the {{ strtolower($model_class) }}:
+                                Do you really want to delete the {{ strtolower($HTMLHelper::properPlural($model_class)) }}:
                                 <br /><br />
                                 "<em>{{ $record->title }}</em>"
                                 <br />
