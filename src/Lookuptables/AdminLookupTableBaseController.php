@@ -369,6 +369,39 @@ abstract class AdminLookupTableBaseController extends BaseController
 
 
     /**
+     * Confirm the deletion
+     *
+     * The javascript that I use works everywhere except for posts. I thought, well,
+     * I tend to be distracted when I do deletions; plus, I have a funny type of
+     * muscle memory when it comes to gray system-ish model pop-up message boxes.
+     * When a system confirm pops-up, 99% I click "ok". I should have a confirmation
+     * that actually gets my attention -- and to use the trick where "cancel" on the right
+     * due to "ok" muscle memory tendency.
+     *
+     * @param  int      $id     NOTE: *NOT* passing the REQUEST object
+     * @return Response
+     */
+    public function confirmDeletion($id)
+    {
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/delete_confirm',
+            [
+                'user'                         => Auth::user(),
+                'record'                       => $this->repository->getFind($id),
+                'package_title'                => $this->package_title,
+                'table_name'                   => $this->table_type_plural,
+                'model_class'                  => $this->table_type_singular,
+                'resource_route_name'          => $this->resource_route_name,
+                'HTMLHelper'                   => HTMLHelper::class,
+                'Config'                       => Config::class,
+                'Form'                         => Form::class,
+            ]);
+    }
+
+
+
+
+
+    /**
      * Remove the specific record from the db
      * DELETE /{lookup table}/{id}
      *
