@@ -34,7 +34,8 @@
                             </td>
                             <td align="right">
                                 {{-- Submit and cancel buttons --}}
-                                {!! Form::submit( 'Edit '.ucwords($HTMLHelper::properPlural($model_class)).'!' ) !!}
+                                {!! Form::submit( 'Save & Exit' ) !!}
+                                {!! Form::submit( 'Save & Edit', ['name' => 'return_to_edit'] ) !!}
                                 {!! $HTMLHelper::back_button('Cancel') !!}
                             </td>
                         </tr>
@@ -58,7 +59,8 @@
                                 <input name="crud_action" type="hidden" value="update">
 
                                 {{-- Submit and cancel buttons --}}
-                                {!! Form::submit( 'Edit '.ucwords($HTMLHelper::properPlural($model_class)).'!' ) !!}
+                                {!! Form::submit( 'Save & Exit' ) !!}
+                                {!! Form::submit( 'Save & Edit', ['name' => 'return_to_edit'] ) !!}
                                 {!! $HTMLHelper::back_button('Cancel') !!}
                             </td>
                         </tr>

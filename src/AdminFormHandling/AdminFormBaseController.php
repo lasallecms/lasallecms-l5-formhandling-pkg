@@ -399,6 +399,10 @@ abstract class AdminFormBaseController extends BaseController
      */
     public function update(Request $request)
     {
+	// Grab these inputs to determine if we need to return to the edit form after updating
+        $return_to_edit = $request->input('return_to_edit');
+        $record_id      = $request->input('id');
+
         $response = $this->dispatchFrom(UpdateCommand::class, $request);
 
 
@@ -441,6 +445,14 @@ abstract class AdminFormBaseController extends BaseController
             $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
         }
         Session::flash('message', $message);
+
+
+
+        if ($return_to_edit == "Save & Edit") {
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.edit', $record_id);
+        }
+
+
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
 
