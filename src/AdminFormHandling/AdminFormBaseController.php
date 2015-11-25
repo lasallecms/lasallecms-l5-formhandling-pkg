@@ -47,6 +47,7 @@ use Illuminate\Http\Request;
 
 // Laravel Facades
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
@@ -232,8 +233,10 @@ abstract class AdminFormBaseController extends BaseController
      */
     public function store(Request $request)
     {
-   
-    
+	// Grab this input to determine if we need to return to the edit form after updating
+        $return_to_edit = $request->input('return_to_edit');
+
+
         $response = $this->dispatchFrom(CreateCommand::class, $request);
 
         Session::flash('status_code', $response['status_code'] );
@@ -266,6 +269,20 @@ abstract class AdminFormBaseController extends BaseController
             $message =  "You successfully created the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
         }
         Session::flash('message', $message);
+
+
+        // Redirect to the edit form?
+        $record_id = DB::table(strtolower($this->model->table))->where('title', '=', $response['data']['title'])->value('id');
+        if ( 
+            ($return_to_edit == "Save & Edit") 
+            && (!empty($this->model->table)) 
+            && (!empty($response['data']['title'])) 
+            && ($record_id > 0) 
+        ) {
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.edit', $record_id);
+        }
+
+
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
 
@@ -447,7 +464,7 @@ abstract class AdminFormBaseController extends BaseController
         Session::flash('message', $message);
 
 
-
+        // Redirect to the edit form?
         if ($return_to_edit == "Save & Edit") {
             return Redirect::route('admin.'.$this->model->resource_route_name.'.edit', $record_id);
         }

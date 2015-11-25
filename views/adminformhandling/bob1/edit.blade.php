@@ -36,7 +36,8 @@
                                 {{-- Submit and cancel buttons --}}
                                 {!! Form::submit( 'Save & Exit' ) !!}
                                 {!! Form::submit( 'Save & Edit', ['name' => 'return_to_edit'] ) !!}
-                                {!! $HTMLHelper::back_button('Cancel') !!}
+                                {{-- $HTMLHelper::back_button('Cancel') --}}
+                                <a href="{{{ URL::route('admin.'.$resource_route_name.'.index') }}}" class="btn btn-default  btn-xs" role="button"><i class="fa fa-times"></i> Cancel</a>
                             </td>
                         </tr>
 
@@ -61,7 +62,8 @@
                                 {{-- Submit and cancel buttons --}}
                                 {!! Form::submit( 'Save & Exit' ) !!}
                                 {!! Form::submit( 'Save & Edit', ['name' => 'return_to_edit'] ) !!}
-                                {!! $HTMLHelper::back_button('Cancel') !!}
+                                {{-- $HTMLHelper::back_button('Cancel') --}}
+                                <a href="{{{ URL::route('admin.'.$resource_route_name.'.index') }}}" class="btn btn-default  btn-xs" role="button"><i class="fa fa-times"></i> Cancel</a>
                             </td>
                         </tr>
 
