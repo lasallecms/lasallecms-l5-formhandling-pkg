@@ -10,7 +10,42 @@ A featured image can come from different places:
 * you can type in a URL where the image resides (eg, a CDN or AWS S3)
 * you can select an existing image that resides on the server
 
-Right now, when specifying Featured Image in your model, do this:
+---
+
+When specifying Featured Image in your model, do this when specifying your fields as a property:
+
+<pre>
+// Start: Featured Image
+// https://github.com/lasallecms/lasallecms-l5-formhandling-pkg/tree/master/views/adminformhandling/bob1/README_FEATURED_IMAGE.md
+[
+    'name'                  => 'featured_image',
+    'type'                  => 'varchar',
+    'info'                  => 'The one single image that represents this post, displayed in lists, and at top of the post.',
+    'index_skip'            => false,
+],
+[
+    'name'                  => 'featured_image_url',
+    'type'                  => 'varchar',
+    'info'                  => '',
+    'index_skip'            => true,
+],
+[
+    'name'                  => 'featured_image_upload',
+    'type'                  => 'file',
+    'info'                  => '',
+    'index_skip'            => true,
+],
+[
+    'name'                  => 'featured_image_server',
+    'type'                  => 'varchar',
+    'info'                  => '',
+    'index_skip'            => true,
+],
+// End: Featured Image
+</pre>
+
+
+Or, like this when specifying your fields with a method: 
 
 <pre>
 // Start: Featured Image
@@ -48,7 +83,12 @@ $field_list[] = [
         
 ---
 
-featured_image field  = tells the admin form automation to set up its featured image section
+## IT IS IMPERATIVE THAT YOU HANDLE AN EXTERNAL IMAGE URL IN YOUR APP's BLADE VIEWS.  
+## THERE IS NO MECHANISM WITHIN LASALLE SOFTWARE TO HANDLE THE DISPLAY OF EXTERNAL IMAGE URLs. 
+
+---
+
+featured_image        = tells the admin form automation to set up its featured image section
 
 featured_image_url    = the image's external URL
     
