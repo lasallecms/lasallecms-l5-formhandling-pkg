@@ -67,9 +67,12 @@ class UpdateCommand extends Command implements SelfHandling
         // add fields with their associated data to the new command instance
         foreach( $field_list as $field )
         {
-            $newUpdateCommand->$field['name'] = Input::get($field['name']);
+            if ( ($field['name'] == "featured_image_upload") && (Input::file($field['name'])) ) {
+                $newUpdateCommand->$field['name'] = Input::file($field['name'])->getClientOriginalName();
+            } else {
+                $newUpdateCommand->$field['name'] = Input::get($field['name']);
+            }
         }
-
 
         // Get the namespace and class name of the Form Processor class
         $namespace_formprocessor        = $this->getNamespaceFormprocessor();

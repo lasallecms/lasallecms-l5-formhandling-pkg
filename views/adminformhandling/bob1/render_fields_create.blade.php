@@ -38,7 +38,7 @@ There are standard fields that I am using, that make this automation a bit easie
                     {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
                 </td>
                 <td>
-                    {!! Form::input('number', $field['name'], Input::old($field['name'], '')) !!}
+                    {!! Form::input('number', $field['name'], Input::old($field['name'], ''), ['size' => $admin_size_input_text_box]) !!}
 
                     @include('formhandling::adminformhandling.bob1.popover')
                 </td>
@@ -48,18 +48,29 @@ There are standard fields that I am using, that make this automation a bit easie
     @endif
 
 
-    @if ( $field['type'] == "varchar" )
+    @if (
+        ($field['type'] == "varchar")               &&
+        ($field['name'] != "featured_image")        &&
+        ($field['name'] != "featured_image_url")    &&
+        ($field['name'] != "featured_image_upload") &&
+        ($field['name'] != "featured_image_server")
+    )
         <tr>
             <td>
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::input('text', $field['name'], Input::old($field['name'], '')) !!}
+                {!! Form::input('text', $field['name'], Input::old($field['name'], ''), ['size' => $admin_size_input_text_box]) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
         </tr>
-     @endif
+    @endif
+
+
+    @if ( $field['name'] == "featured_image" )
+        @include('formhandling::adminformhandling.bob1.featured_image_create')
+    @endif
 
 
     @if ( ($field['type'] == "boolean") && ($field['name'] != "postupdate") )
@@ -165,7 +176,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::email($field['name'], Input::old($field['name'],'')) !!}
+                {!! Form::email($field['name'], Input::old($field['name'],''), ['size' => $admin_size_input_text_box]) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -178,7 +189,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::password($field['name']) !!}
+                {!! Form::password($field['name'], ['size' => $admin_size_input_text_box]) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>

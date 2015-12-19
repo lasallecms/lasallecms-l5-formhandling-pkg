@@ -220,6 +220,7 @@ abstract class AdminFormBaseController extends BaseController
             'carbon'                       => Carbon::class,
             'Config'                       => Config::class,
             'Form'                         => Form::class,
+            'admin_size_input_text_box'    => Config::get('lasallecmsadmin.admin_size_input_text_box'),
         ]);
     }
 
@@ -243,7 +244,11 @@ abstract class AdminFormBaseController extends BaseController
 
         if ($response['status_text'] == "validation_failed")
         {
-            Session::flash('message', $response['errorMessages']->first());
+            if (is_object($response['errorMessages'])) {
+                Session::flash('message', $response['errorMessages']->first());
+            } else {
+                Session::flash('message', $response['errorMessages']);
+            }
 
             // Return to the form with error messages
             return Redirect::back()
@@ -403,6 +408,7 @@ abstract class AdminFormBaseController extends BaseController
             'carbon'                       => Carbon::class,
             'Config'                       => Config::class,
             'Form'                         => Form::class,
+            'admin_size_input_text_box'    => Config::get('lasallecmsadmin.admin_size_input_text_box'),
         ]);
     }
 
@@ -427,7 +433,12 @@ abstract class AdminFormBaseController extends BaseController
 
         if ($response['status_text'] == "validation_failed")
         {
-            Session::flash('message', $response['errorMessages']->first());
+            // flash message
+            if (is_object($response['errorMessages'])) {
+                Session::flash('message', $response['errorMessages']->first());
+            } else {
+                Session::flash('message', $response['errorMessages']);
+            }
 
             // Return to the edit form with error messages
             return Redirect::back()
