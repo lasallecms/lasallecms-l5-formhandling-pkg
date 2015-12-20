@@ -21,7 +21,7 @@
                         {!! $HTMLHelper::finagleVarcharFieldTypeForIndexListing($field,$record->$field['name']) !!}
                     @endif
 
-                    @if ( $field['name'] == "featured_image" )
+                    @if ( ($field['name'] == "featured_image") && ($record->$field['name'] != "") )
                                 <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->$field['name'] !!}" width="75" height="auto" />
                     @endif
 

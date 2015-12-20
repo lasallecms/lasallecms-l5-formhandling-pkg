@@ -24,11 +24,12 @@
                 <div class="col-md-9">
 
                     {!! Form::model($record,
-                    [
-                    'route' => ['admin.'.$resource_route_name.'.update', $record->id],
-                    'method' => 'PUT',
-                    'files' => true,
-                     ]) !!}
+                        [
+                        'route' => ['admin.'.$resource_route_name.'.update', $record->id],
+                        'method' => 'PUT',
+                        'files' => true,
+                         ]
+                     ) !!}
 
                     {{-- the table! --}}
                     <table class="table table-striped table-bordered table-condensed table-hover">

@@ -22,7 +22,12 @@
                 <div class="col-md-3"></div>
 
                 <div class="col-md-9">
-                    {!! Form::open(['route' => 'admin.'.$resource_route_name.'.store']) !!}
+                    {!! Form::open(
+                        [
+                        'route' => 'admin.'.$resource_route_name.'.store',
+                        'files' => true,
+                        ]
+                    ) !!}
 
                     {{-- the table! --}}
                     <table class="table table-striped table-bordered table-condensed table-hover">

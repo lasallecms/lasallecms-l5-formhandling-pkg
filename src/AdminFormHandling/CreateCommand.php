@@ -70,7 +70,11 @@ class CreateCommand extends Command implements SelfHandling
         {
             if ( $field['name'] == "id" ) continue;
 
-            $newCreateCommand->$field['name'] = Input::get($field['name']);
+            if ( ($field['name'] == "featured_image_upload") && (Input::file($field['name'])) ) {
+                $newCreateCommand->$field['name'] = Input::file($field['name'])->getClientOriginalName();
+            } else {
+                $newCreateCommand->$field['name'] = Input::get($field['name']);
+            }
         }
 
         // Get the namespace and class name of the Form Processor class
