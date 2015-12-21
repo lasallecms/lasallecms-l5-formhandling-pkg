@@ -22,7 +22,13 @@
                     @endif
 
                     @if ( ($field['name'] == "featured_image") && ($record->$field['name'] != "") )
+
+                        @if ($HTMLHelper::isHTTPorHTTPS($record->featured_image))
                                 <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->$field['name'] !!}" width="75" height="auto" />
+                        @else
+                            <img src="{!! $record->$field['name'] !!}" width="150" height="auto" />
+                        @endif
+
                     @endif
 
                     @if ( $field['type'] == "boolean" )
