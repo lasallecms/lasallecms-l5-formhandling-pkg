@@ -5,7 +5,7 @@
 
 <tr>
     <td>
-        {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
+        {!! Form::label('featured_image', 'Featured Image: ') !!}
     </td>
 
     @if ($record->featured_image)
@@ -70,5 +70,9 @@
 
 <tr>
     <td style="border-bottom: 1px solid mediumpurple;"></td>
-    <td style="border-bottom: 1px solid mediumpurple;">@include('formhandling::adminformhandling.bob1.popover')</td>
+    <td style="border-bottom: 1px solid mediumpurple;">
+        @if (isset($field))
+            @include('formhandling::adminformhandling.bob1.popover')
+        @endif
+    </td>
 </tr>
