@@ -13,7 +13,13 @@
         </tr>
     @endif
 
-    @if ( $field['type'] == "varchar" )
+    @if (
+            ($field['type'] == "varchar") &&
+            ($field['name'] != "featured_image") &&
+            ($field['name'] != "featured_image_url") &&
+            ($field['name'] != "featured_image_upload") &&
+            ($field['name'] != "featured_image_server")
+        )
         <tr>
             <td>
                 {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
@@ -22,6 +28,23 @@
                 {{{ $record->$field['name'] }}}
             </td>
         </tr>
+    @endif
+
+    @if ($field['name'] == "featured_image")
+        <td> {!! $HTMLHelper::adminFormFieldLabel($field) !!}:</td>
+
+        @if ($record->$field['name'])
+            <td>
+                <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->$field['name'] !!}" width="150" height="auto" />
+                <br />
+                ({!! $record->$field['name'] !!})
+            </td>
+        @else
+            <td>
+                You have <strong>not</strong> chosen a featured image.
+            </td>
+         @endif
+
     @endif
 
 

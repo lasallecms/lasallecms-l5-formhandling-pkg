@@ -276,6 +276,10 @@ abstract class AdminFormBaseController extends BaseController
         Session::flash('message', $message);
 
 
+        if (!isset($response['data']['title'])) {
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
         // Redirect to the edit form?
         $record_id = DB::table(strtolower($this->model->table))->where('title', '=', $response['data']['title'])->value('id');
         if ( 
