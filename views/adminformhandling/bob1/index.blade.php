@@ -34,6 +34,10 @@
                             {!! $HTMLHelper::adminCreateButton($resource_route_name, $model_class, 'right') !!}
                         @endif
 
+
+                        <form method="POST" action="{{{ Config::get('app.url') }}}/index.php/admin/{{ $resource_route_name }}/confirmDeletionMultipleRows" accept-charset="UTF-8">
+                         {{{ csrf_field() }}}
+
                         {{-- bootstrap table tutorial http://twitterbootstrap.org/twitter-bootstrap-table-example-tutorial --}}
                         {{-- http://datatables.net/manual/options --}}
 
@@ -45,6 +49,11 @@
                             @include('formhandling::adminformhandling.bob1.render_table_body_fields_index')
 
                         </table>
+
+                        <br /><br />
+                        <button type="submit" class="btn btn-danger" name="deleteMultipleRecords" type="submit">
+                            <i class="fa fa-times icon-2x"></i> Delete the checked rows
+                        </button>
 
                     @else
                         <br /><br />

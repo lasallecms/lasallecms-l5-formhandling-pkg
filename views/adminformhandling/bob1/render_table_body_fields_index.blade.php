@@ -3,7 +3,14 @@
         <tr>
 
             @foreach ($field_list as $field)
+
                 @if ( !$field['index_skip'] )
+
+                    {{-- The checkbox --> the primary ID field is always the first field. --}}
+                    @if ( $field['name'] == "id")
+                        <td align="center"><input name="checkbox[]" type="checkbox" value="{!! $record->$field['name'] !!}"></td>
+                    @endif
+
 
 
                     @if ( (empty($field['index_align'])) || ($field['index_align'] == "") || (strtolower($field['index_align']) == "left")  )
@@ -11,6 +18,7 @@
                     @else
                         <td align="center">
                     @endif
+
 
 
                     @if ( $field['type'] == "int" )
@@ -110,4 +118,6 @@
 
         </tr>
     @endforeach
+
 </tbody>
+

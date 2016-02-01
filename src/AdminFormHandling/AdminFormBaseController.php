@@ -60,28 +60,31 @@ use Collective\Html\FormFacade as Form;
 
 // FYI: the template is the same name as the one specified in the LaSalleCMS Admin package's config
 
+/**
+ * Class AdminFormBaseController
+ * @package Lasallecms\Formhandling\AdminFormhandling
+ */
 abstract class AdminFormBaseController extends BaseController
 {
     use DispatchesJobs, ValidatesRequests;
 
-    /*
+    /**
      * Repository
      *
      * @var Lasallecms\Lasallecmsapi\Repositories\BaseRepository
      */
     protected $repository;
 
-    /*
+    /**
      * @var  namespace and class of relevant model
      */
     protected $model;
 
 
-    /*
+    /**
      * Middleware!
      */
-    public function __construct()
-    {
+    public function __construct() {
         // User must be logged to access everything in this package
         $this->middleware(\Lasallecms\Helpers\Middleware\MustBeLoggedInCheck::class);
 
@@ -96,8 +99,7 @@ abstract class AdminFormBaseController extends BaseController
      *
      * @return Response
      */
-    public function index()
-    {
+    public function index() {
         // Is this user allowed to do this?
         if (!$this->repository->isUserAllowed('index'))
         {
@@ -143,8 +145,7 @@ abstract class AdminFormBaseController extends BaseController
      *
      * @return Response
      */
-    public function create()
-    {
+    public function create() {
         // Is this user allowed to do this?
         if (!$this->repository->isUserAllowed('create'))
         {
@@ -232,8 +233,7 @@ abstract class AdminFormBaseController extends BaseController
      * @param  Request   $request
      * @return Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
 	// Grab this input to determine if we need to return to the edit form after updating
         $return_to_edit = $request->input('return_to_edit');
 
@@ -303,8 +303,7 @@ abstract class AdminFormBaseController extends BaseController
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         if ($this->model->display_the_view_button)
         {
             return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/show',
@@ -339,8 +338,7 @@ abstract class AdminFormBaseController extends BaseController
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         // Is this user allowed to do this?
         if (!$this->repository->isUserAllowed('edit'))
         {
@@ -424,8 +422,7 @@ abstract class AdminFormBaseController extends BaseController
      * @param  Request   $request
      * @return Response
      */
-    public function update(Request $request)
-    {
+    public function update(Request $request) {
 	// Grab these inputs to determine if we need to return to the edit form after updating
         $return_to_edit = $request->input('return_to_edit');
         $record_id      = $request->input('id');
@@ -505,8 +502,7 @@ abstract class AdminFormBaseController extends BaseController
      * @param  int      $id     NOTE: *NOT* passing the REQUEST object
      * @return Response
      */
-    public function confirmDeletion($id)
-    {
+    public function confirmDeletion($id) {
         return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/delete_confirm',
             [
                 'user'                         => Auth::user(),
@@ -516,6 +512,49 @@ abstract class AdminFormBaseController extends BaseController
                 'table_name'                   => $this->model->table,
                 'model_class'                  => $this->model->model_class,
                 'resource_route_name'  => $this->model->resource_route_name,
+                'HTMLHelper'                   => HTMLHelper::class,
+                'Config'                       => Config::class,
+                'Form'                         => Form::class,
+            ]);
+    }
+
+
+    /**
+     * Confirm multiple row deletions
+     *
+     * @return Response
+     */
+    public function confirmDeletionMultipleRows(Request $request) {
+
+        $checkboxes = $request->input('checkbox');
+
+        if (!$checkboxes) {
+            // flash message with redirect
+            Session::flash('status_code', 400 );
+            $message = 'You have not selected any rows for deletion.';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+        // Prepare array of records
+
+        // i) flatten the array (https://laravel.com/docs/5.1/helpers#method-array-flatten)
+        $flattenedChecklistArray = array_flatten($checkboxes);
+
+        // ii) find multiple records
+        $records = $this->model->findMany($flattenedChecklistArray);
+
+        return view('formhandling::adminformhandling/' . config('lasallecmsadmin.admin_template_name') . '/delete_confirmMultipleRows',
+            [
+                'user'                         => Auth::user(),
+                'repository'                   => $this->repository,
+                'records'                      => $records,
+                'package_title'                => $this->model->package_title,
+                'table_name'                   => $this->model->table,
+                'model_class'                  => $this->model->model_class,
+                'checkboxes'                   => $checkboxes,
+                'resource_route_name'          => $this->model->resource_route_name,
                 'HTMLHelper'                   => HTMLHelper::class,
                 'Config'                       => Config::class,
                 'Form'                         => Form::class,
@@ -616,6 +655,109 @@ abstract class AdminFormBaseController extends BaseController
         } else {
             $message =  "You successfully deleted the ".strtolower($this->model->model_class)." ".strtoupper($recordToBeDeleted->title)."!";
         }
+        Session::flash('message', $message);
+        return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+    }
+
+
+
+    public function destroyMultipleRecords(Request $request) {
+
+        // https://laravel.com/docs/5.1/eloquent#deleting-models
+
+        $checkboxes = $request->input('checkbox');
+
+        if (!$checkboxes) {
+            // flash message with redirect
+            Session::flash('status_code', 400 );
+            $message = 'You have not selected any rows for deletion.';
+            Session::flash('message', $message);
+            return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+        }
+
+
+
+        // Prepare array of records
+
+        // i) flatten the array (https://laravel.com/docs/5.1/helpers#method-array-flatten)
+        $flattenedChecklistArray = array_flatten($checkboxes);
+
+        // ii) find multiple records
+        $records = $this->model->findMany($flattenedChecklistArray);
+
+        foreach ($records as $record) {
+
+            // Is this user allowed to do this?
+            if (!$this->repository->isUserAllowed('destroy'))
+            {
+                Session::flash('status_code', 400 );
+                $message = "You are not allowed to delete this".strtolower($this->model->model_class);
+                Session::flash('message', $message);
+                return view('formhandling::warnings/' . config('lasallecmsadmin.admin_template_name') . '/user_not_allowed', [
+                    'package_title'        => $this->model->package_title,
+                    'table_type_plural'    => $this->model->table,
+                    'table_type_singular'  => strtolower($this->model->model_class),
+                    'resource_route_name'  => $this->model->resource_route_name,
+                    'HTMLHelper'           => HTMLHelper::class,
+                ]);
+            }
+
+            // Is this record not supposed to be deleted?
+            if ($this->repository->doNotDelete($record->id))
+            {
+                Session::flash('status_code', 400 );
+                $message = 'This '.strtolower($this->model->model_class).' is a core lookup record, so you cannot delete it';
+                Session::flash('message', $message);
+                return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+            }
+
+
+            // Is this record locked?
+            if ($this->repository->isLocked($record->id))
+            {
+                $response = 'This ".strtolower($this->model->model_class)." is not available for deletion, as someone else is currently editing this post';
+                Session::flash('message', $response);
+                Session::flash('status_code', 400 );
+                return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+            }
+
+
+            // Create the data array
+            $data = [
+                'id'                             => $record->id,
+                'classname_formprocessor_delete' => $this->model->classname_formprocessor_delete,
+                'namespace_formprocessor'        => $this->model->namespace_formprocessor,
+            ];
+
+            $response = $this->dispatch(new DeleteCommand($data));
+
+
+            Session::flash('status_code', $response['status_code'] );
+
+
+            if ($response['status_text'] == "foreign_key_check_failed")
+            {
+                $message = "Cannot delete this ".strtolower($this->model->model_class)." because it is in use.";
+                Session::flash('message', $message);
+
+                // Return to the index listing with error messages
+                return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+            }
+
+
+            if ($response['status_text'] == "persist_failed")
+            {
+                $message = "Persist failed. It does not happen often, but Laravel's deletion failed. The database operation is called at Lasallecms\Lasallecmsapi\\".$this->model->table."\\".$this->model->classname_formprocessor_delete.". MySQL probably hiccupped, so probably just try again.";
+                Session::flash('message', $message);
+
+                // Return to the index listing with error messages
+                return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
+            }
+        }
+
+        // Still here? Then all the records were deleted successfully.
+        $message =  "You successfully deleted all the selected".strtolower(HTMLHelper::properPlural($this->model->model_class))." records!";
+
         Session::flash('message', $message);
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }

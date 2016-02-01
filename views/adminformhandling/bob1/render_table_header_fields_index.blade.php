@@ -3,6 +3,11 @@
 
         @foreach ($field_list as $field)
 
+            {{-- The checkbox --> the primary ID field is always the first field. --}}
+            @if ($field['name'] == 'id')
+                <th style="text-align: center;"></th>
+            @endif
+
             @if ( !$field['index_skip'] )
                 <th style="text-align: center;">{!! $HTMLHelper::adminFormFieldLabel($field) !!}</th>
             @endif
