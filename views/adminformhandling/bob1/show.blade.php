@@ -47,7 +47,7 @@
                 <div class="col-md-3">
 
                     <a href="{{{ URL::route('admin.'.$resource_route_name.'.edit', $record->id) }}}" class="btn btn-success  btn-lg" role="button">
-                        <i class="glyphicon glyphicon-edit"></i>  Edit this {!! strtolower($HTMLHelper::properPlural($model_class)) !!}
+                        <i class="fa fa-edit"></i>  Edit this {!! strtolower($HTMLHelper::properPlural($model_class)) !!}
                     </a>
 
                     <br /><br />

@@ -60,7 +60,7 @@
 
                             <td align="center">
                                 <a href="{{{ URL::route('admin.'.$resource_route_name.'.edit', $record->id) }}}" class="btn btn-success  btn-xs" role="button">
-                                    <i class="glyphicon glyphicon-edit"></i>
+                                    <i class="fa fa-edit"></i>
                                 </a>
                             </td>
                             <td align="center">
@@ -72,7 +72,7 @@
                                     {{{ csrf_field() }}}
 
                                     <button type="submit" class="btn btn-danger btn-xs">
-                                         <i class="glyphicon glyphicon-remove"></i>
+                                         <i class="fa fa-times"></i>
                                     </button>
 
                     </form>
