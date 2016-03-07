@@ -5,7 +5,7 @@
 ```
 {
     "require": {
-        "lasallecms/formhandling": "0.9.*",
+        "lasallecms/formhandling": "1.*",
     }
 }
 ```
