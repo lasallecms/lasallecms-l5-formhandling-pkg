@@ -52,6 +52,10 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
+// Third party classes
+use Carbon\Carbon;
+
+
 // Note that the template is the same name as the one specified in the LaSalleCMS Admin package's config
 
 abstract class AdminLookupTableBaseController extends BaseController
@@ -204,7 +208,9 @@ abstract class AdminLookupTableBaseController extends BaseController
         $lookup->title       = $data['title'];
         $lookup->description = $data['description'];
         $lookup->enabled     = $data['enabled'];
+        $lookup->created_at  = Carbon::now();
         $lookup->created_by  = Auth::user()->id;
+        $lookup->updated_at  = Carbon::now();
         $lookup->updated_by  = Auth::user()->id;
 
         if (!$lookup->save())
@@ -343,7 +349,9 @@ abstract class AdminLookupTableBaseController extends BaseController
         $lookup->title       = $data['title'];
         $lookup->description = $data['description'];
         $lookup->enabled     = $data['enabled'];
+        $lookup->created_at  = Carbon::now();
         $lookup->created_by  = Auth::user()->id;
+        $lookup->updated_at  = Carbon::now();
         $lookup->updated_by  = Auth::user()->id;
 
         if (!$lookup->save())
