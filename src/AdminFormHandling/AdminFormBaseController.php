@@ -423,14 +423,21 @@ abstract class AdminFormBaseController extends BaseController
      * @return Response
      */
     public function update(Request $request) {
-	// Grab these inputs to determine if we need to return to the edit form after updating
+
+	    // Grab these inputs to determine if we need to return to the edit form after updating
         $return_to_edit = $request->input('return_to_edit');
         $record_id      = $request->input('id');
 
+        // Launch the command, and capture the results (I should refactor "$response", but have not yet!)
         $response = $this->dispatchFrom(UpdateCommand::class, $request);
 
-
         Session::flash('status_code', $response['status_code'] );
+
+
+        ///////////////////////////////////////////////////////////////
+        //              Problems with the update                     //
+        ///////////////////////////////////////////////////////////////
+        //        Session::flash('message', $message);
 
         if ($response['status_text'] == "validation_failed")
         {
@@ -451,6 +458,7 @@ abstract class AdminFormBaseController extends BaseController
         if ($response['status_text'] == "persist_failed")
         {
             $message = "Persist failed. It does not happen often, but Laravel's save failed. The database operation is called at Lasallecms\Lasallecmsapi\\".$this->model->table."\\".$this->model->classname_formprocessor_delete.". MySQL probably hiccupped, so probably just try again.";
+
             Session::flash('message', $message);
 
             // Return to the edit form with error messages
@@ -459,28 +467,50 @@ abstract class AdminFormBaseController extends BaseController
         }
 
 
-        if ( empty($response['data']['title']) )
-        {
 
-            if (!empty($response['data']['composite_title']))
-            {
-                $message = "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['composite_title'])."!";
+        ///////////////////////////////////////////////////////////////
+        //                  Update Succeeded!                        //
+        ///////////////////////////////////////////////////////////////
 
-            } else {
-                $message =  "You successfully updated your new ".strtolower($this->model->model_class)."!";
-            }
-
-        } else {
-            $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
+        if ( empty($response['data']['title']) ) {
+             $response['data']['title'] = strtoupper($response['data']['composite_title']);
         }
-        Session::flash('message', $message);
 
+        ///////////////////////////////////////////////////////////////
+        //                     Event?                                //
+        ///////////////////////////////////////////////////////////////
+
+        // if there is an event to fire where need to show an "are you sure" confirmation first
+        if ($response['status_text'] == "update_successful_now_confirm_before_firing_event") {
+
+            $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])."!";
+
+            Session::flash('message', $message);
+
+            return view('lasallecrmlistmanagement::confirmations.confirm_send_to_list', [
+                'user'                 => Auth::user(),
+                'data'                 => $response['data'],
+                'message'              => $message,
+                'HTMLHelper'           => HTMLHelper::class,
+            ]);
+        }
+
+        // if there is an event to fire with *no* "are you sure" confirmation first
+        if ($response['status_text'] == "update_successful_with_event_fired") {
+
+            $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])." *and* ".$response['data']['eventDescription']."!";
+        }
+
+        ///////////////////////////////////////////////////////////////
+        //                     Redirect                              //
+        ///////////////////////////////////////////////////////////////
+
+        Session::flash('message', $message);
 
         // Redirect to the edit form?
         if ($return_to_edit == "Save & Edit") {
             return Redirect::route('admin.'.$this->model->resource_route_name.'.edit', $record_id);
         }
-
 
         return Redirect::route('admin.'.$this->model->resource_route_name.'.index');
     }
