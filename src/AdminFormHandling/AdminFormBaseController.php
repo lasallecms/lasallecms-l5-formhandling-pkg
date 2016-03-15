@@ -499,13 +499,13 @@ abstract class AdminFormBaseController extends BaseController
         if ($response['status_text'] == "update_successful_with_event_fired") {
 
             $message =  "You successfully updated the ".strtolower($this->model->model_class)." ".strtoupper($response['data']['title'])." *and* ".$response['data']['eventDescription']."!";
+
+            Session::flash('message', $message);
         }
 
         ///////////////////////////////////////////////////////////////
         //                     Redirect                              //
         ///////////////////////////////////////////////////////////////
-
-        Session::flash('message', $message);
 
         // Redirect to the edit form?
         if ($return_to_edit == "Save & Edit") {
