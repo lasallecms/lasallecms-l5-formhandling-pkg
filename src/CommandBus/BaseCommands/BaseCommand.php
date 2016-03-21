@@ -1,5 +1,5 @@
 <?php
-namespace Lasallecms\Formhandling\AdminFormhandling;
+namespace Lasallecms\Formhandling\CommandBus\BaseCommands;
 
 /**
  *
@@ -32,15 +32,19 @@ namespace Lasallecms\Formhandling\AdminFormhandling;
 // Laravel facades
 use Illuminate\Support\Facades\Input;
 
-abstract class Command
+
+/**
+ * Class BaseCommand
+ * @package Lasallecms\Formhandling\CommandBus\BaseCommands
+ */
+abstract class BaseCommand
 {
     /*
      * Get the field_list from the request
      *
      * @return array
      */
-    public function getFieldList()
-    {
+    public function getFieldList() {
         // paramater "true" returns array
         // http://php.net/manual/en/function.json-decode.php
         return json_decode(Input::get('field_list'), true);
@@ -51,8 +55,7 @@ abstract class Command
      *
      * @return string
      */
-    public function getNamespaceFormprocessor()
-    {
+    public function getNamespaceFormprocessor() {
         return Input::get('namespace_formprocessor');
     }
 
@@ -61,8 +64,7 @@ abstract class Command
      *
      * @return string
      */
-    public function getClassnameFormprocessorCreate()
-    {
+    public function getClassnameFormprocessorCreate() {
         return Input::get('classname_formprocessor_create');
     }
 
@@ -71,8 +73,7 @@ abstract class Command
      *
      * @return string
      */
-    public function getClassnameFormprocessorUpdate()
-    {
+    public function getClassnameFormprocessorUpdate() {
         return Input::get('classname_formprocessor_update');
     }
 
@@ -81,8 +82,7 @@ abstract class Command
      *
      * @return string
      */
-    public function getClassnameFormprocessorDelete()
-    {
+    public function getClassnameFormprocessorDelete() {
         return Input::get('classname_formprocessor_delete');
     }
 }

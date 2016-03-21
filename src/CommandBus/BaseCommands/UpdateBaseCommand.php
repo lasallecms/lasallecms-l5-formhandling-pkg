@@ -1,5 +1,6 @@
 <?php
-namespace Lasallecms\Formhandling\AdminFormhandling;
+
+namespace Lasallecms\Formhandling\CommandBus\BaseCommands;
 
 /**
  *
@@ -30,7 +31,7 @@ namespace Lasallecms\Formhandling\AdminFormhandling;
  */
 
 // LaSalle Software
-use Lasallecms\Formhandling\AdminFormhandling\Command;
+use Lasallecms\Formhandling\CommandBus\BaseCommands\BaseCommand;
 
 // Laravel classes
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -40,7 +41,11 @@ use Illuminate\Container\Container as Container;
 // Laravel facades
 use Illuminate\Support\Facades\Input;
 
-class UpdateCommand extends Command implements SelfHandling
+/**
+ * Class UpdateBaseCommand
+ * @package Lasallecms\Formhandling\CommandBus\BaseCommands
+ */
+class UpdateBaseCommand extends BaseCommand implements SelfHandling
 {
     use DispatchesJobs;
 
@@ -49,10 +54,9 @@ class UpdateCommand extends Command implements SelfHandling
      *
      * @return void
      */
-    public function handle()
-    {
+    public function handle() {
         // Create a new command instance
-        $newUpdateCommand = new UpdateCommand;
+        $newUpdateCommand = new UpdateBaseCommand;
 
 
         // get the field list array

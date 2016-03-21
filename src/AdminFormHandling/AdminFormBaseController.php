@@ -35,9 +35,9 @@ use Lasallecms\Helpers\Dates\DatesHelper;
 use Lasallecms\Helpers\HTML\HTMLHelper;
 
 // Command bus commands
-use Lasallecms\Formhandling\AdminFormhandling\CreateCommand;
-use Lasallecms\Formhandling\AdminFormhandling\UpdatePostCommand;
-use Lasallecms\Formhandling\AdminFormhandling\DeletePostCommand;
+use Lasallecms\Formhandling\CommandBus\BaseCommands\CreateBaseCommand;
+use Lasallecms\Formhandling\CommandBus\BaseCommands\UpdateBaseCommand;
+use Lasallecms\Formhandling\CommandBus\BaseCommands\DeleteBaseCommand;
 
 // Laravel classes
 use Illuminate\Routing\Controller as BaseController;
@@ -238,7 +238,7 @@ abstract class AdminFormBaseController extends BaseController
         $return_to_edit = $request->input('return_to_edit');
 
 
-        $response = $this->dispatchFrom(CreateCommand::class, $request);
+        $response = $this->dispatchFrom(CreateBaseCommand::class, $request);
 
         Session::flash('status_code', $response['status_code'] );
 
@@ -429,7 +429,7 @@ abstract class AdminFormBaseController extends BaseController
         $record_id      = $request->input('id');
 
         // Launch the command, and capture the results (I should refactor "$response", but have not yet!)
-        $response = $this->dispatchFrom(UpdateCommand::class, $request);
+        $response = $this->dispatchFrom(UpdateBaseCommand::class, $request);
 
         Session::flash('status_code', $response['status_code'] );
 
@@ -653,7 +653,7 @@ abstract class AdminFormBaseController extends BaseController
 
 
         $recordToBeDeleted = $this->model->findOrFail($id);
-        $response = $this->dispatch(new DeleteCommand($data));
+        $response = $this->dispatch(new DeleteBaseCommand($data));
 
 
         Session::flash('status_code', $response['status_code'] );
@@ -759,7 +759,7 @@ abstract class AdminFormBaseController extends BaseController
                 'namespace_formprocessor'        => $this->model->namespace_formprocessor,
             ];
 
-            $response = $this->dispatch(new DeleteCommand($data));
+            $response = $this->dispatch(new DeleteBaseCommand($data));
 
 
             Session::flash('status_code', $response['status_code'] );

@@ -1,5 +1,6 @@
 <?php
-namespace Lasallecms\Formhandling\AdminFormhandling;
+
+namespace Lasallecms\Formhandling\CommandBus\BaseCommands;
 
 /**
  *
@@ -30,64 +31,54 @@ namespace Lasallecms\Formhandling\AdminFormhandling;
  */
 
 // LaSalle Software
-use Lasallecms\Formhandling\AdminFormhandling\Command;
+use Lasallecms\Formhandling\CommandBus\BaseCommands\BaseCommand;
 
 // Laravel classes
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Container\Container as Container;
 
-// Laravel facades
-use Illuminate\Support\Facades\Input;
-
-class CreateCommand extends Command implements SelfHandling
+/**
+ * Class DeleteBaseCommand
+ * @package Lasallecms\Formhandling\CommandBus\BaseCommands
+ */
+class DeleteBaseCommand extends BaseCommand implements SelfHandling
 {
     use DispatchesJobs;
+
+    /*
+     * Grab the ID
+     *
+     * @param  array
+     */
+    public function __construct($data) {
+        $this->id                             = $data['id'];
+        $this->namespace_formprocessor        = $data['namespace_formprocessor'];
+        $this->classname_formprocessor_delete = $data['classname_formprocessor_delete'];
+    }
 
     /**
      * Execute the command.
      *
      * @return void
      */
-    public function handle()
-    {
-        // Create a new command instance
-        $newCreateCommand = new CreateCommand;
-
-
-        // get the field list array
-        $field_list = $this->getFieldList();
-
-
-        // add the field_list itself to new command instance
-        $newCreateCommand->field_list = $field_list;
-
-        // add crud_action to the new command instance
-        $newCreateCommand->crud_action = Input::get('crud_action');
-
-        // add fields with their associated data to the new command instance
-        foreach( $field_list as $field )
-        {
-            if ( $field['name'] == "id" ) continue;
-
-            if ( ($field['name'] == "featured_image_upload") && (Input::file($field['name'])) ) {
-                $newCreateCommand->$field['name'] = Input::file($field['name'])->getClientOriginalName();
-            } else {
-                $newCreateCommand->$field['name'] = Input::get($field['name']);
-            }
-        }
+    public function handle() {
 
         // Get the namespace and class name of the Form Processor class
-        $namespace_formprocessor        = $this->getNamespaceFormprocessor();
-        $classname_formprocessor_create = $this->getClassnameFormprocessorCreate();
+        $namespace_formprocessor        = $this->namespace_formprocessor;
+        $classname_formprocessor_delete = $this->classname_formprocessor_delete;
+
 
         // Inject a new instance of the container, in order to inject the relevant model.
-        $this->app   = new Container;
+        $this->app = new Container;
+
 
         // bind the Form Processor class to the IoC (that is, inject the Form Processor class into the IoC)
-        $this->$classname_formprocessor_create = $this->app->make( $namespace_formprocessor."\\".$classname_formprocessor_create );
+        $this->$classname_formprocessor_delete = $this->app->make($namespace_formprocessor . "\\" . $classname_formprocessor_delete);
+
 
         // Now onto the Form Processor, aka "The Command Handler"
-        return $this->$classname_formprocessor_create->quarterback($newCreateCommand);
+        return $this->$classname_formprocessor_delete->quarterback($this->id);
     }
 }
+
