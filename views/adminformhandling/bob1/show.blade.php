@@ -53,7 +53,7 @@
                     <br /><br />
 
                     <a href="{{{ URL::route('admin.'.$resource_route_name.'.index') }}}" class="btn btn-success  btn-lg" role="button">
-                        <i class="glyphicon glyphicon-list-alt"></i>  Return to the {!! strtolower($HTMLHelper::properPlural($model_class)) !!} Listing
+                        <i class="fa fa-list"></i>  Return to the {!! strtolower($HTMLHelper::properPlural($model_class)) !!} Listing
                     </a>
 
 
