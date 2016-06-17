@@ -8,7 +8,7 @@
 
                     {{-- The checkbox --> the primary ID field is always the first field. --}}
                     @if ( $field['name'] == "id")
-                        <td align="center"><input name="checkbox[]" type="checkbox" value="{!! $record->$field['name'] !!}"></td>
+                        <td align="center"><input name="checkbox[]" type="checkbox" value="{!! $record->{$field['name']} !!}"></td>
                     @endif
 
 
@@ -22,42 +22,42 @@
 
 
                     @if ( $field['type'] == "int" )
-                        {!! $record->$field['name'] !!}
+                        {!! $record->{$field['name']} !!}
                     @endif
 
                     @if ( ($field['type'] == "varchar") && ($field['name'] != "featured_image") )
-                        {!! $HTMLHelper::finagleVarcharFieldTypeForIndexListing($field,$record->$field['name']) !!}
+                        {!! $HTMLHelper::finagleVarcharFieldTypeForIndexListing($field,$record->{$field['name']}) !!}
                     @endif
 
-                    @if ( ($field['name'] == "featured_image") && ($record->$field['name'] != "") )
+                    @if ( ($field['name'] == "featured_image") && ($record->{$field['name']} != "") )
 
                         @if ($HTMLHelper::isHTTPorHTTPS($record->featured_image))
-                                               <img src="{!! $record->$field['name'] !!}" width="150" height="auto" />             
+                                               <img src="{!! $record->{$field['name']} !!}" width="150" height="auto" />
                         @else
-                            <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->$field['name'] !!}" width="75" height="auto" />
+                            <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->{$field['name']} !!}" width="75" height="auto" />
                         @endif
 
                     @endif
 
                     @if ( $field['type'] == "boolean" )
-                        {!! $HTMLHelper::convertToCheckOrXBootstrapButtons($record->$field['name']) !!}
+                        {!! $HTMLHelper::convertToCheckOrXBootstrapButtons($record->{$field['name']}) !!}
                     @endif
 
 
                     @if ( $field['type'] == "text-with-editor" )
-                        {!! $record->$field['name'] !!}
+                        {!! $record->{$field['name']} !!}
                     @endif
 
                     @if ( $field['type'] == "text-no-editor" )
-                        {!! $record->$field['name'] !!}
+                        {!! $record->{$field['name']} !!}
                     @endif
 
                     @if ( $field['type'] == "date")
-                        {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->$field['name']) !!}
+                        {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->{$field['name']}) !!}
                     @endif
 
                     @if ( $field['type'] == "email" )
-                        {!! $record->$field['name'] !!}
+                        {!! $record->{$field['name']} !!}
                     @endif
 
                     @if ( $field['type'] == "related_table" )
@@ -65,7 +65,7 @@
                         @if ( !empty($field['related_pivot_table']) )
                             {!! $HTMLHelper::listSingleCollectionElementOnSeparateRow($repository->getLookupTableRecordsAssociatedByParentId(strtolower($field['related_model_class']), $record->id)) !!}
                         @else
-                            {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->$field['name'])  !!}
+                            {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->{$field['name']})  !!}
                         @endif
                     @endif
 
