@@ -75,9 +75,9 @@ class CreateBaseCommand extends BaseCommand implements SelfHandling
             if ( $field['name'] == "id" ) continue;
 
             if ( ($field['name'] == "featured_image_upload") && (Input::file($field['name'])) ) {
-                $newCreateCommand->$field['name'] = Input::file($field['name'])->getClientOriginalName();
+                $newCreateCommand->{$field['name']} = Input::file($field['name'])->getClientOriginalName();
             } else {
-                $newCreateCommand->$field['name'] = Input::get($field['name']);
+                $newCreateCommand->{$field['name']} = Input::get($field['name']);
             }
         }
 

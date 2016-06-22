@@ -72,9 +72,9 @@ class UpdateBaseCommand extends BaseCommand implements SelfHandling
         foreach( $field_list as $field )
         {
             if ( ($field['name'] == "featured_image_upload") && (Input::file($field['name'])) ) {
-                $newUpdateCommand->$field['name'] = Input::file($field['name'])->getClientOriginalName();
+                $newUpdateCommand->{$field['name']} = Input::file($field['name'])->getClientOriginalName();
             } else {
-                $newUpdateCommand->$field['name'] = Input::get($field['name']);
+                $newUpdateCommand->{$field['name']} = Input::get($field['name']);
             }
         }
 
