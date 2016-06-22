@@ -39,7 +39,7 @@ There are standard fields that I am using, that make this automation a bit easie
                     {!! $record->id !!}
                     {!! Form::hidden('id', $record->id) !!}
                 @else
-                    {!! Form::input('number', $field['name'], Input::old($field['name'], $record->$field['name'])) !!}
+                    {!! Form::input('number', $field['name'], Input::old($field['name'], $record->{$field['name']})) !!}
                 @endif
 
                 @include('formhandling::adminformhandling.bob1.popover')
@@ -60,7 +60,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::input('text', $field['name'], Input::old($field['name'], $record->$field['name']), ['size' => $admin_size_input_text_box]) !!}
+                {!! Form::input('text', $field['name'], Input::old($field['name'], $record->{$field['name']}), ['size' => $admin_size_input_text_box]) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -79,7 +79,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::checkbox($field['name'], '1', Input::old($field['name'],  $record->$field['name'])) !!}
+                {!! Form::checkbox($field['name'], '1', Input::old($field['name'],  $record->{$field['name']})) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -93,7 +93,7 @@ There are standard fields that I am using, that make this automation a bit easie
             </td>
             <td>
                 <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}1">
-                    {!! Input::old($field['name'], $record->$field['name'])  !!}
+                    {!! Input::old($field['name'], $record->{$field['name']})  !!}
                 </textarea>
 
                 <script type="text/javascript" src="{{{ Config::get('app.url') }}}/packages/lasallecmsadmin/bob1/ckeditor/ckeditor.js"></script>
@@ -113,7 +113,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', $record->$field['name'])  !!}</textarea>
+                <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', $record->{$field['name']})  !!}</textarea>
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -128,7 +128,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::input('date', $field['name'], Input::old($field['name'], $record->$field['name'])) !!}
+                {!! Form::input('date', $field['name'], Input::old($field['name'], $record->{$field['name']})) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>
@@ -174,7 +174,7 @@ There are standard fields that I am using, that make this automation a bit easie
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {!! Form::email($field['name'], Input::old($field['name'],$record->$field['name']), ['size' => $admin_size_input_text_box]) !!}
+                {!! Form::email($field['name'], Input::old($field['name'],$record->{$field['name']}), ['size' => $admin_size_input_text_box]) !!}
 
                 @include('formhandling::adminformhandling.bob1.popover')
             </td>

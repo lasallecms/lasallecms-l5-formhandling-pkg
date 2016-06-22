@@ -25,7 +25,7 @@
                 {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
@@ -33,11 +33,11 @@
     @if ($field['name'] == "featured_image")
         <td> {!! $HTMLHelper::adminFormFieldLabel($field) !!}:</td>
 
-        @if ($record->$field['name'])
+        @if ($record->{$field['name']})
             <td>
-                <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->$field['name'] !!}" width="150" height="auto" />
+                <img src="{{{ Config::get('app.url') }}}/{{{ Config::get('lasallecmsfrontend.images_folder_uploaded') }}}/{!! $record->{$field['name']} !!}" width="150" height="auto" />
                 <br />
-                ({!! $record->$field['name'] !!})
+                ({!! $record->{$field['name']} !!})
             </td>
         @else
             <td>
@@ -54,7 +54,7 @@
                 {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
@@ -68,7 +68,7 @@
             </td>
             <td>
                 {{-- UNESCAPED SO THAT THE HTML RENDERS --}}
-                {!! $record->$field['name'] !!}
+                {!! $record->{$field['name']} !!}
             </td>
         </tr>
     @endif
@@ -80,7 +80,7 @@
                 {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
@@ -93,7 +93,7 @@
                 {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
@@ -109,7 +109,7 @@
                 @if ( !empty($field['related_pivot_table']) )
                     {!! $HTMLHelper::listSingleCollectionElementOnSeparateRow($repository->getLookupTableRecordsAssociatedByParentId(strtolower($field['related_model_class']), $record->id)) !!}
                 @else
-                    {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->$field['name'])  !!}
+                    {!! $HTMLHelper::getTitleById($field['related_table_name'], $record->{$field['name']})  !!}
                 @endif
 
             </td>
@@ -138,7 +138,7 @@
                 {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
@@ -149,7 +149,7 @@
                 {!!  $HTMLHelper::adminFormFieldLabel($field) !!}:
             </td>
             <td>
-                {{{ $record->$field['name'] }}}
+                {{{ $record->{$field['name']} }}}
             </td>
         </tr>
     @endif
