@@ -95,7 +95,7 @@ There are standard fields that I am using, that make this automation a bit easie
                     </td>
                     <td>
                 <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}1">
-                    {!! Input::old($field['name'], $record->{$field['name']})  !!}
+                    {!! Input::old($field['name'], Crypt::decrypt($record->{$field['name']}))  !!}
                 </textarea>
 
                         <script type="text/javascript" src="{{{ Config::get('app.url') }}}/packages/lasallecmsadmin/bob1/ckeditor/ckeditor.js"></script>
@@ -139,7 +139,7 @@ There are standard fields that I am using, that make this automation a bit easie
                         {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
                     </td>
                     <td>
-                       <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', $record->{$field['name']})  !!}</textarea>
+                       <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', Crypt::decrypt($record->{$field['name']}))  !!}</textarea>
 
                         @include('formhandling::adminformhandling.bob1.popover')
                     </td>
