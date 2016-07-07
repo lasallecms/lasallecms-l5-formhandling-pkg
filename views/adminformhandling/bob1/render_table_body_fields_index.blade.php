@@ -45,12 +45,25 @@
 
 
                     @if ( $field['type'] == "text-with-editor" )
-                        {!! $record->{$field['name']} !!}
+                        @if ( isset($field['crypt']) )
+                            @if ($field['crypt'])
+                                {!! Crypt::decrypt($record->{$field['name']}) !!}
+                            @else
+                                {!! $record->{$field['name']} !!}
+                            @endif
+                        @endif
                     @endif
 
                     @if ( $field['type'] == "text-no-editor" )
-                        {!! $record->{$field['name']} !!}
+                        @if ( isset($field['crypt']) )
+                            @if ($field['crypt'])
+                                {!! Crypt::decrypt($record->{$field['name']}) !!}
+                            @else
+                                {!! $record->{$field['name']} !!}
+                            @endif
+                        @endif
                     @endif
+
 
                     @if ( $field['type'] == "date")
                         {!! $DatesHelper::convertDateONLYtoFormattedDateString($record->{$field['name']}) !!}

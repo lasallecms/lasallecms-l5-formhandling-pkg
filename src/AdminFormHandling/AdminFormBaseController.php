@@ -47,8 +47,9 @@ use Illuminate\Http\Request;
 
 // Laravel Facades
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -112,6 +113,7 @@ abstract class AdminFormBaseController extends BaseController
                 'table_type_singular'  => strtolower($this->model->model_class),
                 'resource_route_name'  => $this->resource_route_name,
                 'HTMLHelper'           => HTMLHelper::class,
+                'Crypt'                => Crypt::class,
             ]);
         }
 
@@ -135,6 +137,7 @@ abstract class AdminFormBaseController extends BaseController
             'carbon'                       => Carbon::class,
             'Config'                       => Config::class,
             'Form'                         => Form::class,
+            'Crypt'                        => Crypt::class,
         ]);
     }
 
@@ -323,6 +326,7 @@ abstract class AdminFormBaseController extends BaseController
                     'carbon'                       => Carbon::class,
                     'Config'                       => Config::class,
                     'Form'                         => Form::class,
+                    'Crypt'                        => Crypt::class,
                 ]);
 
         } else {
@@ -411,6 +415,7 @@ abstract class AdminFormBaseController extends BaseController
             'Config'                       => Config::class,
             'Form'                         => Form::class,
             'admin_size_input_text_box'    => Config::get('lasallecmsadmin.admin_size_input_text_box'),
+            'Crypt'                        => Crypt::class,
         ]);
     }
 

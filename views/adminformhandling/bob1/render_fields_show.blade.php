@@ -62,27 +62,58 @@
 
     {{-- This field has html that needs to render as html. --}}
     @if ( $field['type'] == "text-with-editor" )
-        <tr>
-            <td>
-                {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
-            </td>
-            <td>
-                {{-- UNESCAPED SO THAT THE HTML RENDERS --}}
-                {!! $record->{$field['name']} !!}
-            </td>
-        </tr>
+        @if ( isset($field['crypt']) )
+            @if ($field['crypt'])
+                <tr>
+                    <td>
+                        {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
+                    </td>
+                    <td>
+                        {{-- UNESCAPED SO THAT THE HTML RENDERS --}}
+                        {!! Crypt::decrypt($record->{$field['name']}) !!}
+                    </td>
+                </tr>
+
+            @else
+
+                <tr>
+                    <td>
+                        {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
+                    </td>
+                    <td>
+                        {{-- UNESCAPED SO THAT THE HTML RENDERS --}}
+                        {!! $record->{$field['name']} !!}
+                    </td>
+                </tr>
+            @endif
+        @endif
     @endif
 
 
     @if ( $field['type'] == "text-no-editor" )
-        <tr>
-            <td>
-                {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
-            </td>
-            <td>
-                {{{ $record->{$field['name']} }}}
-            </td>
-        </tr>
+        @if ( isset($field['crypt']) )
+            @if ($field['crypt'])
+                <tr>
+                    <td>
+                        {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
+                    </td>
+                    <td>
+                        {{{ Crypt::decrypt($record->{$field['name']}) }}}
+                    </td>
+                </tr>
+
+            @else
+
+                <tr>
+                    <td>
+                        {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
+                    </td>
+                    <td>
+                        {{{ $record->{$field['name']} }}}
+                    </td>
+                </tr>
+            @endif
+        @endif
     @endif
 
 
