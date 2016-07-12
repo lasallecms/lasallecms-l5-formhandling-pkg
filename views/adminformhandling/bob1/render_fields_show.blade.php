@@ -73,9 +73,7 @@
                         {!! Crypt::decrypt($record->{$field['name']}) !!}
                     </td>
                 </tr>
-
             @else
-
                 <tr>
                     <td>
                         {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
@@ -86,6 +84,19 @@
                     </td>
                 </tr>
             @endif
+
+        @else
+
+            <tr>
+                <td>
+                    {!! $HTMLHelper::adminFormFieldLabel($field) !!}:
+                </td>
+                <td>
+                    {{-- UNESCAPED SO THAT THE HTML RENDERS --}}
+                    {!! $record->{$field['name']} !!}
+                </td>
+            </tr>
+
         @endif
     @endif
 

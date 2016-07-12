@@ -51,6 +51,8 @@
                             @else
                                 {!! $record->{$field['name']} !!}
                             @endif
+                        @else
+                            {!! $record->{$field['name']} !!}
                         @endif
                     @endif
 
@@ -61,6 +63,8 @@
                             @else
                                 {!! $record->{$field['name']} !!}
                             @endif
+                        @else
+                            {!! $record->{$field['name']} !!}
                         @endif
                     @endif
 

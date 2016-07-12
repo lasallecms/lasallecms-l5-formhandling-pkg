@@ -106,9 +106,7 @@ There are standard fields that I am using, that make this automation a bit easie
                         @include('formhandling::adminformhandling.bob1.popover')
                     </td>
                 </tr>
-
             @else
-
                 <tr>
                     <td>
                         {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
@@ -127,7 +125,29 @@ There are standard fields that I am using, that make this automation a bit easie
                     </td>
                 </tr>
             @endif
+
+        @else
+
+            <tr>
+                <td>
+                    {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
+                </td>
+                <td>
+                <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}1">
+                    {!! Input::old($field['name'], $record->{$field['name']})  !!}
+                </textarea>
+
+                    <script type="text/javascript" src="{{{ Config::get('app.url') }}}/packages/lasallecmsadmin/bob1/ckeditor/ckeditor.js"></script>
+
+                    {!! "<script>CKEDITOR.replace('".$field['name']."');</script>" !!}
+
+
+                    @include('formhandling::adminformhandling.bob1.popover')
+                </td>
+            </tr>
+
         @endif
+
     @endif
 
 
@@ -144,9 +164,7 @@ There are standard fields that I am using, that make this automation a bit easie
                         @include('formhandling::adminformhandling.bob1.popover')
                     </td>
                 </tr>
-
             @else
-
                 <tr>
                     <td>
                         {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
@@ -158,7 +176,23 @@ There are standard fields that I am using, that make this automation a bit easie
                     </td>
                 </tr>
             @endif
+
+
+        @else
+
+            <tr>
+                <td>
+                    {!! Form::label($field['name'], $HTMLHelper::adminFormFieldLabel($field) .': ') !!}
+                </td>
+                <td>
+                    <textarea name="{!! $field['name'] !!}" id="{!! $field['name'] !!}">{!! Input::old('excerpt', $record->{$field['name']})  !!}</textarea>
+
+                    @include('formhandling::adminformhandling.bob1.popover')
+                </td>
+            </tr>
+
         @endif
+
     @endif
 
 
